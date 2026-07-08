@@ -1,4 +1,4 @@
-const CACHE_NAME = 'fitcoach-shell-v3';
+const CACHE_NAME = 'fitcoach-shell-v4';
 
 const APP_SHELL = [
   './',
@@ -17,6 +17,7 @@ const APP_SHELL = [
   './js/shell/tabShell.js',
   './js/shell/icons.js',
   './js/shell/equipmentPicker.js',
+  './js/shell/coachFab.js',
   './js/session/workoutSession.js',
   './js/data/equipmentOptions.js',
   './js/utils/escapeHtml.js',
