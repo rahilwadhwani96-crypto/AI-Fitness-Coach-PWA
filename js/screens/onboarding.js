@@ -98,6 +98,13 @@ export function renderOnboarding(root, { onComplete }) {
         <section class="card">
           <h2>What equipment do you have?</h2>
           <p class="step-indicator">Step 2 of 2</p>
+
+          <div class="scan-section">
+            <input type="file" accept="image/*" capture="environment" id="equipment-photo-input" hidden />
+            <button type="button" id="scan-equipment-button">Scan a photo of your equipment</button>
+            <p class="hint" id="scan-status" hidden></p>
+          </div>
+
           <div class="equipment-grid" id="equipment-grid">
             ${EQUIPMENT_OPTIONS.map((name) => equipmentCard(name)).join('')}
           </div>
@@ -120,6 +127,49 @@ export function renderOnboarding(root, { onComplete }) {
       });
     });
 
+    const photoInput = root.querySelector('#equipment-photo-input');
+    const scanButton = root.querySelector('#scan-equipment-button');
+    const scanStatus = root.querySelector('#scan-status');
+
+    scanButton.addEventListener('click', () => photoInput.click());
+
+    photoInput.addEventListener('change', async () => {
+      const file = photoInput.files[0];
+      if (!file) return;
+
+      scanButton.disabled = true;
+      scanButton.textContent = 'Analyzing photo…';
+      scanStatus.hidden = true;
+
+      try {
+        const { base64, mimeType } = await resizeImageToBase64(file);
+        const result = await callApi('detectEquipment', { imageBase64: base64, mimeType });
+        const detected = result.detected || [];
+
+        if (detected.length === 0) {
+          scanStatus.textContent = "Didn't recognize any equipment in that photo — try another angle, or select manually below.";
+        } else {
+          detected.forEach((name) => {
+            if (!state.selectedEquipment.has(name)) {
+              state.selectedEquipment.add(name);
+              const card = root.querySelector(`.equipment-card[data-name="${name}"]`);
+              if (card) card.classList.add('equipment-card--selected');
+            }
+          });
+          scanStatus.textContent = `Found: ${detected.join(', ')}. Review the selection below and adjust if needed.`;
+        }
+        scanStatus.hidden = false;
+      } catch (err) {
+        scanStatus.textContent =
+          err instanceof ApiError ? err.message : 'Could not analyze that photo. Try again or select manually.';
+        scanStatus.hidden = false;
+      } finally {
+        scanButton.disabled = false;
+        scanButton.textContent = 'Scan a photo of your equipment';
+        photoInput.value = '';
+      }
+    });
+
     const continueButton = root.querySelector('#equipment-continue');
     continueButton.addEventListener('click', async () => {
       const errorEl = root.querySelector('#equipment-error');
@@ -140,6 +190,40 @@ export function renderOnboarding(root, { onComplete }) {
   }
 
   renderProfileStep();
+}
+
+/**
+ * Downscales an image client-side before it's sent to the backend —
+ * keeps the request small and fast regardless of how large the original
+ * phone photo is. Returns base64 (no data: prefix) plus its mime type.
+ */
+function resizeImageToBase64(file, maxDimension = 1024, quality = 0.7) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const img = new Image();
+      img.onload = () => {
+        let { width, height } = img;
+        if (width > height && width > maxDimension) {
+          height = Math.round((height * maxDimension) / width);
+          width = maxDimension;
+        } else if (height > maxDimension) {
+          width = Math.round((width * maxDimension) / height);
+          height = maxDimension;
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+        const dataUrl = canvas.toDataURL('image/jpeg', quality);
+        resolve({ base64: dataUrl.split(',')[1], mimeType: 'image/jpeg' });
+      };
+      img.onerror = () => reject(new Error('Could not read that image file.'));
+      img.src = reader.result;
+    };
+    reader.onerror = () => reject(new Error('Could not read that image file.'));
+    reader.readAsDataURL(file);
+  });
 }
 
 function textField(name, label, type) {
