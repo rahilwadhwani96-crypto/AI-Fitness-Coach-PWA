@@ -457,6 +457,27 @@ button:active:not(:disabled) {
   content: "Refreshing…";
 }
 
+.pull-indicator--done {
+  color: var(--accent);
+  height: 32px !important;
+}
+
+.pull-indicator--done::before {
+  content: "\2713";
+  width: auto;
+  height: auto;
+  border: none;
+  font-size: 15px;
+  font-weight: 700;
+  opacity: 1;
+  animation: none;
+  transform: none;
+}
+
+.pull-indicator--done::after {
+  content: "Updated";
+}
+
 .tab-panel-scroll {
   flex: 1;
   overflow-y: auto;
