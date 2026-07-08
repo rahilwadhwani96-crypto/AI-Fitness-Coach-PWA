@@ -1,0 +1,174 @@
+import { callApi, ApiError } from '../api/client.js';
+import { escapeHtml } from '../utils/escapeHtml.js';
+
+const DIFFICULTY_OPTIONS = ['Too Easy', 'Good', 'Hard', 'Very Hard'];
+
+/**
+ * Takes over `appRoot` entirely (escaping the tab shell) and walks the
+ * user through one exercise at a time, rest screens between them, and a
+ * final difficulty + save screen. Calls onEnd() once saved, so the
+ * caller can rebuild the normal app view.
+ */
+export function startWorkoutSession(appRoot, { workout, profile, onEnd }) {
+  const exercises = workout.exercises;
+  const total = exercises.length;
+  const restSeconds = Number(profile.PreferredRestSeconds) || 60;
+  const startedAt = Date.now();
+  let currentIndex = 0;
+
+  async function begin() {
+    try {
+      await callApi('startWorkoutSession');
+    } catch (err) {
+      // Non-fatal — the user can still work through the exercises even
+      // if this particular write fails; completion will attempt to save.
+    }
+    renderExercise();
+  }
+
+  function renderExercise() {
+    const exercise = exercises[currentIndex];
+    appRoot.innerHTML = `
+      <div class="centered-view">
+        <p class="step-indicator">Exercise ${currentIndex + 1} of ${total}</p>
+        <section class="card">
+          <h1 class="screen-title">${escapeHtml(exercise.name)}</h1>
+          <dl class="details">
+            <dt>Sets</dt><dd>${escapeHtml(exercise.sets)}</dd>
+            <dt>Reps</dt><dd>${escapeHtml(exercise.reps)}</dd>
+            <dt>Target muscle</dt><dd>${escapeHtml(exercise.targetMuscle)}</dd>
+          </dl>
+          ${renderVideo(exercise.videoId)}
+          <h2>Technique</h2>
+          <p class="hint">${escapeHtml(exercise.technique)}</p>
+          ${exercise.notes ? `<h2>Notes</h2><p class="hint">${escapeHtml(exercise.notes)}</p>` : ''}
+          <button type="button" id="complete-exercise">Mark complete</button>
+        </section>
+      </div>
+    `;
+
+    appRoot.querySelector('#complete-exercise').addEventListener('click', () => {
+      currentIndex += 1;
+      if (currentIndex >= total) {
+        renderEnd();
+      } else {
+        renderRest();
+      }
+    });
+  }
+
+  function renderVideo(videoId) {
+    if (!videoId) {
+      return `<p class="hint video-unavailable">Demonstration video not available for this exercise.</p>`;
+    }
+    return `
+      <div class="video-wrapper">
+        <iframe
+          src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(videoId)}"
+          title="Exercise demonstration"
+          frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen
+        ></iframe>
+      </div>
+    `;
+  }
+
+  function renderRest() {
+    const nextExercise = exercises[currentIndex];
+    let remaining = restSeconds;
+
+    appRoot.innerHTML = `
+      <div class="centered-view">
+        <section class="card rest-card">
+          <h2>Rest</h2>
+          <p class="rest-timer" id="rest-timer">${formatSeconds(remaining)}</p>
+          <p class="hint">Up next</p>
+          <p class="screen-title" style="margin:0 0 20px;">${escapeHtml(nextExercise.name)}</p>
+          <button type="button" id="skip-rest">Skip rest</button>
+        </section>
+      </div>
+    `;
+
+    const timerEl = appRoot.querySelector('#rest-timer');
+    const interval = setInterval(() => {
+      remaining -= 1;
+      if (remaining <= 0) {
+        clearInterval(interval);
+        renderExercise();
+        return;
+      }
+      timerEl.textContent = formatSeconds(remaining);
+    }, 1000);
+
+    appRoot.querySelector('#skip-rest').addEventListener('click', () => {
+      clearInterval(interval);
+      renderExercise();
+    });
+  }
+
+  function renderEnd() {
+    const elapsedMinutes = Math.max(1, Math.round((Date.now() - startedAt) / 60000));
+
+    appRoot.innerHTML = `
+      <div class="centered-view">
+        <section class="card">
+          <h1 class="screen-title">Workout complete</h1>
+          <dl class="details">
+            <dt>Duration</dt><dd>~${elapsedMinutes} min</dd>
+            <dt>Exercises completed</dt><dd>${total}</dd>
+          </dl>
+          <h2>How did it feel?</h2>
+          <div class="goal-grid" id="difficulty-grid">
+            ${DIFFICULTY_OPTIONS.map(
+              (label) => `
+              <button type="button" class="goal-chip" data-difficulty="${label}">
+                <span>${label}</span>
+              </button>
+            `
+            ).join('')}
+          </div>
+          <p class="form-error" id="end-error" hidden></p>
+          <button type="button" id="save-workout" disabled>Save workout</button>
+        </section>
+      </div>
+    `;
+
+    let selectedDifficulty = null;
+    const saveButton = appRoot.querySelector('#save-workout');
+
+    appRoot.querySelectorAll('.goal-chip').forEach((chip) => {
+      chip.addEventListener('click', () => {
+        selectedDifficulty = chip.dataset.difficulty;
+        appRoot.querySelectorAll('.goal-chip').forEach((c) => c.classList.remove('goal-chip--selected'));
+        chip.classList.add('goal-chip--selected');
+        saveButton.disabled = false;
+      });
+    });
+
+    saveButton.addEventListener('click', async () => {
+      const errorEl = appRoot.querySelector('#end-error');
+      errorEl.hidden = true;
+      saveButton.disabled = true;
+      saveButton.textContent = 'Saving…';
+
+      try {
+        await callApi('completeWorkout', { difficulty: selectedDifficulty });
+        onEnd();
+      } catch (err) {
+        errorEl.textContent = err instanceof ApiError ? err.message : 'Could not save your workout. Try again.';
+        errorEl.hidden = false;
+        saveButton.disabled = false;
+        saveButton.textContent = 'Save workout';
+      }
+    });
+  }
+
+  begin();
+}
+
+function formatSeconds(totalSeconds) {
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+  return `${minutes}:${String(seconds).padStart(2, '0')}`;
+}
