@@ -16,6 +16,7 @@ const APP_SHELL = [
   './js/screens/profile.js',
   './js/shell/tabShell.js',
   './js/shell/icons.js',
+  './js/shell/equipmentPicker.js',
   './js/data/equipmentOptions.js',
   './js/utils/escapeHtml.js',
   './icons/icon-192.png',
