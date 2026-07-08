@@ -461,14 +461,14 @@ button:active:not(:disabled) {
   flex: 1;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
-  padding: max(20px, env(safe-area-inset-top)) 20px calc(112px + env(safe-area-inset-bottom));
+  padding: max(20px, env(safe-area-inset-top)) 20px calc(100px + max(6px, env(safe-area-inset-bottom)));
 }
 
 .tab-bar {
   position: absolute;
   left: 12px;
   right: 12px;
-  bottom: calc(12px + env(safe-area-inset-bottom));
+  bottom: max(6px, env(safe-area-inset-bottom));
   display: flex;
   background: rgba(22, 22, 22, 0.72);
   backdrop-filter: blur(20px) saturate(1.5);
@@ -519,7 +519,7 @@ button:active:not(:disabled) {
 .coach-fab {
   position: absolute;
   right: 16px;
-  bottom: calc(88px + env(safe-area-inset-bottom));
+  bottom: calc(76px + max(6px, env(safe-area-inset-bottom)));
   width: 52px;
   height: 52px;
   padding: 0;
