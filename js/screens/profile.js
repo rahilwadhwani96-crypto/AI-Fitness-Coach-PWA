@@ -1,4 +1,6 @@
 import { escapeHtml } from '../utils/escapeHtml.js';
+import { callApi, ApiError } from '../api/client.js';
+import { renderEquipmentPicker } from '../shell/equipmentPicker.js';
 
 export function renderProfile(container, { profile, equipment }) {
   const rows = [
@@ -23,11 +25,33 @@ export function renderProfile(container, { profile, equipment }) {
     </section>
     <section class="card">
       <h2>Equipment</h2>
-      ${
-        equipment.length
-          ? `<ul class="equipment-list">${equipment.map((name) => `<li>${escapeHtml(name)}</li>`).join('')}</ul>`
-          : '<p class="hint">No equipment selected yet.</p>'
-      }
+      <div id="equipment-picker"></div>
+      <p class="form-error" id="equipment-save-error" hidden></p>
+      <button type="button" id="save-equipment-button">Save changes</button>
     </section>
   `;
+
+  const picker = renderEquipmentPicker(container.querySelector('#equipment-picker'), equipment);
+
+  const saveButton = container.querySelector('#save-equipment-button');
+  saveButton.addEventListener('click', async () => {
+    const errorEl = container.querySelector('#equipment-save-error');
+    errorEl.hidden = true;
+    saveButton.disabled = true;
+    saveButton.textContent = 'Saving…';
+
+    try {
+      await callApi('saveEquipment', { selected: picker.getSelected() });
+      saveButton.textContent = 'Saved';
+      setTimeout(() => {
+        saveButton.textContent = 'Save changes';
+        saveButton.disabled = false;
+      }, 1500);
+    } catch (err) {
+      errorEl.textContent = err instanceof ApiError ? err.message : 'Could not save changes.';
+      errorEl.hidden = false;
+      saveButton.disabled = false;
+      saveButton.textContent = 'Save changes';
+    }
+  });
 }
