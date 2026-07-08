@@ -9,9 +9,15 @@ async function bootstrap() {
   renderLoading();
   try {
     const status = await callApi('getOnboardingStatus');
-    if (status.completed) {
-      renderTabShell(root, { profile: status.profile, equipment: status.equipment });
+   if (status.completed) {
+      renderTabShell(root, {
+        profile: status.profile,
+        equipment: status.equipment,
+        appRoot: root,
+        restartApp: bootstrap,
+      });
     } else {
+     
       renderOnboarding(root, { onComplete: bootstrap });
     }
   } catch (err) {
