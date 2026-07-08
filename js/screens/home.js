@@ -7,6 +7,11 @@ export function renderHome(container, context) {
   load(container, context);
 }
 
+/** Used by pull-to-refresh — re-fetches today's workout. */
+export function refreshHome(container, context) {
+  return load(container, context);
+}
+
 async function load(container, context) {
   try {
     const data = await callApi('getTodayWorkout');
