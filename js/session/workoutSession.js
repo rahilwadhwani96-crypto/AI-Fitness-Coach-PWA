@@ -6,15 +6,18 @@ const DIFFICULTY_OPTIONS = ['Too Easy', 'Good', 'Hard', 'Very Hard'];
 
 /**
  * Takes over `appRoot` entirely (escaping the tab shell) and walks the
- * user through one exercise at a time, rest screens between them, and a
- * final difficulty + save screen. Calls onEnd() once saved, so the
- * caller can rebuild the normal app view.
+ * user through one exercise at a time: exercise -> difficulty rating for
+ * that exercise -> rest -> next exercise, then a final save screen.
+ * Difficulty is asked per exercise (matching ExerciseResults' per-row
+ * Difficulty column) rather than once for the whole workout. Calls
+ * onEnd() once saved, so the caller can rebuild the normal app view.
  */
 export function startWorkoutSession(appRoot, { workout, profile, onEnd }) {
   const exercises = workout.exercises;
   const total = exercises.length;
   const restSeconds = Number(profile.PreferredRestSeconds) || 60;
   const startedAt = Date.now();
+  const difficulties = []; // one entry per exercise, same order as `exercises`
   let currentIndex = 0;
 
   async function begin() {
@@ -51,12 +54,7 @@ export function startWorkoutSession(appRoot, { workout, profile, onEnd }) {
     attachCoachFab(appRoot);
 
     appRoot.querySelector('#complete-exercise').addEventListener('click', () => {
-      currentIndex += 1;
-      if (currentIndex >= total) {
-        renderEnd();
-      } else {
-        renderRest();
-      }
+      renderExerciseDifficulty(exercise.name);
     });
   }
 
@@ -75,6 +73,39 @@ export function startWorkoutSession(appRoot, { workout, profile, onEnd }) {
         ></iframe>
       </div>
     `;
+  }
+
+  function renderExerciseDifficulty(justCompletedName) {
+    appRoot.innerHTML = `
+      <div class="centered-view">
+        <section class="card">
+          <h2>How did "${escapeHtml(justCompletedName)}" feel?</h2>
+          <div class="goal-grid" id="exercise-difficulty-grid">
+            ${DIFFICULTY_OPTIONS.map(
+              (label) => `
+              <button type="button" class="goal-chip" data-difficulty="${label}">
+                <span>${label}</span>
+              </button>
+            `
+            ).join('')}
+          </div>
+        </section>
+      </div>
+    `;
+
+    attachCoachFab(appRoot);
+
+    appRoot.querySelectorAll('.goal-chip').forEach((chip) => {
+      chip.addEventListener('click', () => {
+        difficulties.push(chip.dataset.difficulty);
+        currentIndex += 1;
+        if (currentIndex >= total) {
+          renderEnd();
+        } else {
+          renderRest();
+        }
+      });
+    });
   }
 
   function renderRest() {
@@ -123,36 +154,15 @@ export function startWorkoutSession(appRoot, { workout, profile, onEnd }) {
             <dt>Duration</dt><dd>~${elapsedMinutes} min</dd>
             <dt>Exercises completed</dt><dd>${total}</dd>
           </dl>
-          <h2>How did it feel?</h2>
-          <div class="goal-grid" id="difficulty-grid">
-            ${DIFFICULTY_OPTIONS.map(
-              (label) => `
-              <button type="button" class="goal-chip" data-difficulty="${label}">
-                <span>${label}</span>
-              </button>
-            `
-            ).join('')}
-          </div>
           <p class="form-error" id="end-error" hidden></p>
-          <button type="button" id="save-workout" disabled>Save workout</button>
+          <button type="button" id="save-workout">Save workout</button>
         </section>
       </div>
     `;
 
     attachCoachFab(appRoot);
 
-    let selectedDifficulty = null;
     const saveButton = appRoot.querySelector('#save-workout');
-
-    appRoot.querySelectorAll('.goal-chip').forEach((chip) => {
-      chip.addEventListener('click', () => {
-        selectedDifficulty = chip.dataset.difficulty;
-        appRoot.querySelectorAll('.goal-chip').forEach((c) => c.classList.remove('goal-chip--selected'));
-        chip.classList.add('goal-chip--selected');
-        saveButton.disabled = false;
-      });
-    });
-
     saveButton.addEventListener('click', async () => {
       const errorEl = appRoot.querySelector('#end-error');
       errorEl.hidden = true;
@@ -160,7 +170,7 @@ export function startWorkoutSession(appRoot, { workout, profile, onEnd }) {
       saveButton.textContent = 'Saving…';
 
       try {
-        await callApi('completeWorkout', { difficulty: selectedDifficulty });
+        await callApi('completeWorkout', { difficulties });
         onEnd();
       } catch (err) {
         errorEl.textContent = err instanceof ApiError ? err.message : 'Could not save your workout. Try again.';
