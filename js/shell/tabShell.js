@@ -126,4 +126,118 @@ function attachSwipeHandling(panelsEl, getActiveIndex, goToIndex) {
       if (!horizontal) {
         if (Math.abs(dx) < 8 && Math.abs(dy) < 8) return;
         horizontal = Math.abs(dx) > Math.abs(dy);
-        if
+        if (!horizontal) {
+          dragging = false;
+          return;
+        }
+      }
+
+      const activeIndex = getActiveIndex();
+      const percentOfOnePanel = (dx / panelWidth()) * (100 / tabCount);
+      const basePercent = activeIndex * (100 / tabCount);
+      panelsEl.style.transform = `translateX(-${basePercent - percentOfOnePanel}%)`;
+    },
+    { passive: true }
+  );
+
+  panelsEl.addEventListener('touchend', (e) => {
+    if (!dragging || !horizontal) {
+      dragging = false;
+      return;
+    }
+    dragging = false;
+    const t = e.changedTouches[0];
+    const dx = t.clientX - startX;
+    const ratio = dx / panelWidth();
+    const activeIndex = getActiveIndex();
+
+    if (ratio <= -SWIPE_THRESHOLD_RATIO) {
+      goToIndex(activeIndex + 1);
+    } else if (ratio >= SWIPE_THRESHOLD_RATIO) {
+      goToIndex(activeIndex - 1);
+    } else {
+      goToIndex(activeIndex);
+    }
+  });
+}
+
+/**
+ * Pull-to-refresh on a single tab's scroll area. Only engages when that
+ * tab is already scrolled to the top (so it never fights normal
+ * scrolling), and calls the tab's own onRefresh() if it has one.
+ */
+function attachPullToRefresh(panel, scrollEl) {
+  const indicator = panel.querySelector('[data-pull]');
+  const tabId = panel.dataset.tab;
+  const tab = TABS.find((t) => t.id === tabId);
+
+  let startY = 0;
+  let pulling = false;
+
+  scrollEl.addEventListener(
+    'touchstart',
+    (e) => {
+      pulling = scrollEl.scrollTop <= 0;
+      startY = e.touches[0].clientY;
+    },
+    { passive: true }
+  );
+
+  scrollEl.addEventListener(
+    'touchmove',
+    (e) => {
+      if (!pulling) return;
+      const dy = e.touches[0].clientY - startY;
+      if (dy <= 0) {
+        pulling = false;
+        indicator.style.height = '0px';
+        return;
+      }
+      const clamped = Math.min(dy * 0.5, PULL_THRESHOLD * 1.4);
+      indicator.style.height = `${clamped}px`;
+      indicator.classList.toggle('pull-indicator--ready', clamped >= PULL_THRESHOLD);
+    },
+    { passive: true }
+  );
+
+  scrollEl.addEventListener('touchend', async () => {
+    if (!pulling) return;
+    pulling = false;
+    const ready = indicator.classList.contains('pull-indicator--ready');
+    indicator.classList.remove('pull-indicator--ready');
+
+    if (ready && tab && typeof tab.refresh === 'function') {
+      indicator.classList.add('pull-indicator--loading');
+      try {
+        await tab.refresh(scrollEl);
+      } finally {
+        indicator.classList.remove('pull-indicator--loading');
+        indicator.style.height = '0px';
+      }
+    } else {
+      indicator.style.height = '0px';
+    }
+  });
+}
+
+function toggleCoachPanel(root) {
+  const existing = root.querySelector('.coach-panel');
+  if (existing) {
+    existing.remove();
+    return;
+  }
+
+  const panel = document.createElement('div');
+  panel.className = 'coach-panel';
+  panel.innerHTML = `
+    <div class="coach-panel-header">
+      <span>AI Coach</span>
+      <button type="button" class="coach-panel-close" aria-label="Close">&times;</button>
+    </div>
+    <div class="coach-panel-body">
+      <p class="hint">Chat with your coach arrives in a later milestone.</p>
+    </div>
+  `;
+  root.querySelector('.tab-shell').appendChild(panel);
+  panel.querySelector('.coach-panel-close').addEventListener('click', () => panel.remove());
+}
