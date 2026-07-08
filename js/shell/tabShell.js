@@ -1,13 +1,13 @@
 import { ICONS } from './icons.js';
 import { attachCoachFab } from './coachFab.js';
-import { renderHome } from '../screens/home.js';
+import { renderHome, refreshHome } from '../screens/home.js';
 import { renderWeekly } from '../screens/weekly.js';
 import { renderProgress } from '../screens/progress.js';
 import { renderFood } from '../screens/food.js';
 import { renderProfile } from '../screens/profile.js';
 
 const TABS = [
-  { id: 'home', label: 'Home', icon: ICONS.home, render: renderHome },
+  { id: 'home', label: 'Home', icon: ICONS.home, render: renderHome, refresh: refreshHome },
   { id: 'weekly', label: 'Weekly', icon: ICONS.weekly, render: renderWeekly },
   { id: 'progress', label: 'Progress', icon: ICONS.progress, render: renderProgress },
   { id: 'food', label: 'Food', icon: ICONS.food, render: renderFood },
@@ -77,7 +77,7 @@ export function renderTabShell(root, context) {
   });
 
   attachSwipeHandling(panelsEl, () => activeIndex, goToIndex);
-  panels.forEach((panel, i) => attachPullToRefresh(panel, scrollAreas[i]));
+  panels.forEach((panel, i) => attachPullToRefresh(panel, scrollAreas[i], context));
 
   attachCoachFab(root.querySelector('.tab-shell'));
 
@@ -163,7 +163,7 @@ function attachSwipeHandling(panelsEl, getActiveIndex, goToIndex) {
  * tab is already scrolled to the top (so it never fights normal
  * scrolling), and calls the tab's own onRefresh() if it has one.
  */
-function attachPullToRefresh(panel, scrollEl) {
+function attachPullToRefresh(panel, scrollEl, context) {
   const indicator = panel.querySelector('[data-pull]');
   const tabId = panel.dataset.tab;
   const tab = TABS.find((t) => t.id === tabId);
@@ -206,9 +206,14 @@ function attachPullToRefresh(panel, scrollEl) {
     if (ready && tab && typeof tab.refresh === 'function') {
       indicator.classList.add('pull-indicator--loading');
       try {
-        await tab.refresh(scrollEl);
-      } finally {
+        await tab.refresh(scrollEl, context);
         indicator.classList.remove('pull-indicator--loading');
+        indicator.classList.add('pull-indicator--done');
+        await new Promise((resolve) => setTimeout(resolve, 700));
+      } catch (err) {
+        // Swallow — the tab's own refresh already shows its own error state if needed.
+      } finally {
+        indicator.classList.remove('pull-indicator--loading', 'pull-indicator--done');
         indicator.style.height = '0px';
       }
     } else {
