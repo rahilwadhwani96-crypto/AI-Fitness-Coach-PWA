@@ -1,4 +1,5 @@
 import { ICONS } from './icons.js';
+import { attachCoachFab } from './coachFab.js';
 import { renderHome } from '../screens/home.js';
 import { renderWeekly } from '../screens/weekly.js';
 import { renderProgress } from '../screens/progress.js';
@@ -36,10 +37,6 @@ export function renderTabShell(root, context) {
         `
         ).join('')}
       </div>
-
-      <button type="button" class="coach-fab" id="coach-fab" aria-label="Open AI Coach">
-        ${ICONS.coach}
-      </button>
 
       <nav class="tab-bar" id="tab-bar">
         ${TABS.map(
@@ -82,7 +79,7 @@ export function renderTabShell(root, context) {
   attachSwipeHandling(panelsEl, () => activeIndex, goToIndex);
   panels.forEach((panel, i) => attachPullToRefresh(panel, scrollAreas[i]));
 
-  root.querySelector('#coach-fab').addEventListener('click', () => toggleCoachPanel(root));
+  attachCoachFab(root.querySelector('.tab-shell'));
 
   goToIndex(0, false);
 }
@@ -218,26 +215,4 @@ function attachPullToRefresh(panel, scrollEl) {
       indicator.style.height = '0px';
     }
   });
-}
-
-function toggleCoachPanel(root) {
-  const existing = root.querySelector('.coach-panel');
-  if (existing) {
-    existing.remove();
-    return;
-  }
-
-  const panel = document.createElement('div');
-  panel.className = 'coach-panel';
-  panel.innerHTML = `
-    <div class="coach-panel-header">
-      <span>AI Coach</span>
-      <button type="button" class="coach-panel-close" aria-label="Close">&times;</button>
-    </div>
-    <div class="coach-panel-body">
-      <p class="hint">Chat with your coach arrives in a later milestone.</p>
-    </div>
-  `;
-  root.querySelector('.tab-shell').appendChild(panel);
-  panel.querySelector('.coach-panel-close').addEventListener('click', () => panel.remove());
 }
