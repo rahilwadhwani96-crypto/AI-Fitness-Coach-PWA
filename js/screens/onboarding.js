@@ -1,5 +1,5 @@
 import { callApi, ApiError } from '../api/client.js';
-import { EQUIPMENT_OPTIONS } from '../data/equipmentOptions.js';
+import { renderEquipmentPicker } from '../shell/equipmentPicker.js';
 
 const GOAL_OPTIONS = ['Fat Loss', 'Muscle Gain', 'Maintenance', 'Strength', 'General Fitness'];
 const EXPERIENCE_OPTIONS = ['Beginner', 'Intermediate', 'Advanced'];
@@ -14,7 +14,6 @@ const GENDER_OPTIONS = ['Male', 'Female', 'Other'];
 export function renderOnboarding(root, { onComplete }) {
   const state = {
     selectedGoals: new Set(),
-    selectedEquipment: new Set(),
   };
 
   function renderProfileStep() {
@@ -105,27 +104,14 @@ export function renderOnboarding(root, { onComplete }) {
             <p class="hint" id="scan-status" hidden></p>
           </div>
 
-          <div class="equipment-grid" id="equipment-grid">
-            ${EQUIPMENT_OPTIONS.map((name) => equipmentCard(name)).join('')}
-          </div>
+          <div id="equipment-picker"></div>
           <p class="form-error" id="equipment-error" hidden></p>
           <button type="button" id="equipment-continue">Finish setup</button>
         </section>
       </div>
     `;
 
-    root.querySelectorAll('.equipment-card').forEach((card) => {
-      card.addEventListener('click', () => {
-        const name = card.dataset.name;
-        if (state.selectedEquipment.has(name)) {
-          state.selectedEquipment.delete(name);
-          card.classList.remove('equipment-card--selected');
-        } else {
-          state.selectedEquipment.add(name);
-          card.classList.add('equipment-card--selected');
-        }
-      });
-    });
+    const picker = renderEquipmentPicker(root.querySelector('#equipment-picker'), []);
 
     const photoInput = root.querySelector('#equipment-photo-input');
     const scanButton = root.querySelector('#scan-equipment-button');
@@ -147,15 +133,10 @@ export function renderOnboarding(root, { onComplete }) {
         const detected = result.detected || [];
 
         if (detected.length === 0) {
-          scanStatus.textContent = "Didn't recognize any equipment in that photo — try another angle, or select manually below.";
+          scanStatus.textContent =
+            "Didn't recognize any equipment in that photo — try another angle, or add it manually below.";
         } else {
-          detected.forEach((name) => {
-            if (!state.selectedEquipment.has(name)) {
-              state.selectedEquipment.add(name);
-              const card = root.querySelector(`.equipment-card[data-name="${name}"]`);
-              if (card) card.classList.add('equipment-card--selected');
-            }
-          });
+          picker.addDetected(detected);
           scanStatus.textContent = `Found: ${detected.join(', ')}. Review the selection below and adjust if needed.`;
         }
         scanStatus.hidden = false;
@@ -178,7 +159,7 @@ export function renderOnboarding(root, { onComplete }) {
       continueButton.textContent = 'Saving…';
 
       try {
-        await callApi('saveEquipment', { selected: [...state.selectedEquipment] });
+        await callApi('saveEquipment', { selected: picker.getSelected() });
         onComplete();
       } catch (err) {
         errorEl.textContent = err instanceof ApiError ? err.message : 'Something went wrong. Try again.';
@@ -244,14 +225,6 @@ function selectField(name, label, options) {
         ${options.map((opt) => `<option value="${opt}">${opt}</option>`).join('')}
       </select>
     </label>
-  `;
-}
-
-function equipmentCard(name) {
-  return `
-    <button type="button" class="equipment-card" data-name="${name}">
-      <span>${name}</span>
-    </button>
   `;
 }
 
