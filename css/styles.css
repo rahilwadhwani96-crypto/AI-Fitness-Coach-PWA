@@ -332,6 +332,45 @@ button:active:not(:disabled) {
   color: var(--accent);
   border: 1px solid var(--accent);
 }
+
+.video-wrapper {
+  position: relative;
+  width: 100%;
+  padding-top: 56.25%; /* 16:9 */
+  margin: 16px 0;
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--bg);
+}
+
+.video-wrapper iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.video-unavailable {
+  margin: 16px 0;
+  padding: 16px;
+  border: 1px dashed var(--border);
+  border-radius: 12px;
+  text-align: center;
+}
+
+.rest-card {
+  text-align: center;
+}
+
+.rest-timer {
+  font-size: 48px;
+  font-weight: 700;
+  color: var(--accent);
+  margin: 12px 0 20px;
+  font-variant-numeric: tabular-nums;
+}
 /* ---------- Tab shell ---------- */
 
 .tab-shell {
