@@ -51,7 +51,7 @@ export function startWorkoutSession(appRoot, { workout, profile, onEnd }) {
       </div>
     `;
 
-    attachCoachFab(appRoot);
+    attachCoachFab(appRoot, { compact: true });
 
     appRoot.querySelector('#complete-exercise').addEventListener('click', () => {
       renderExerciseDifficulty(exercise.name);
@@ -93,7 +93,7 @@ export function startWorkoutSession(appRoot, { workout, profile, onEnd }) {
       </div>
     `;
 
-    attachCoachFab(appRoot);
+    attachCoachFab(appRoot, { compact: true });
 
     appRoot.querySelectorAll('.goal-chip').forEach((chip) => {
       chip.addEventListener('click', () => {
@@ -124,7 +124,7 @@ export function startWorkoutSession(appRoot, { workout, profile, onEnd }) {
       </div>
     `;
 
-    attachCoachFab(appRoot);
+    attachCoachFab(appRoot, { compact: true });
 
     const timerEl = appRoot.querySelector('#rest-timer');
     const interval = setInterval(() => {
@@ -160,7 +160,7 @@ export function startWorkoutSession(appRoot, { workout, profile, onEnd }) {
       </div>
     `;
 
-    attachCoachFab(appRoot);
+    attachCoachFab(appRoot, { compact: true });
 
     const saveButton = appRoot.querySelector('#save-workout');
     saveButton.addEventListener('click', async () => {
