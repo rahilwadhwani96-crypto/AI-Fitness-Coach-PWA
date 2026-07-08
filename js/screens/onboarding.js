@@ -13,6 +13,7 @@ const GENDER_OPTIONS = ['Male', 'Female', 'Other'];
  */
 export function renderOnboarding(root, { onComplete }) {
   const state = {
+    selectedGoals: new Set(),
     selectedEquipment: new Set(),
   };
 
@@ -29,7 +30,12 @@ export function renderOnboarding(root, { onComplete }) {
             ${selectField('gender', 'Gender', GENDER_OPTIONS)}
             ${textField('height', 'Height (cm)', 'number')}
             ${textField('weight', 'Current weight (kg)', 'number')}
-            ${selectField('goal', 'Fitness goal', GOAL_OPTIONS)}
+            <label class="field">
+              <span>Fitness goal (choose one or more)</span>
+              <div class="goal-grid" id="goal-grid">
+                ${GOAL_OPTIONS.map((name) => goalChip(name)).join('')}
+              </div>
+            </label>
             ${textField('workoutDays', 'Workout days per week', 'number')}
             ${textField('workoutDuration', 'Preferred workout duration (min)', 'number')}
             ${selectField('experience', 'Experience level', EXPERIENCE_OPTIONS)}
@@ -41,12 +47,34 @@ export function renderOnboarding(root, { onComplete }) {
     `;
 
     const form = root.querySelector('#profile-form');
+
+    root.querySelectorAll('.goal-chip').forEach((chip) => {
+      chip.addEventListener('click', () => {
+        const name = chip.dataset.name;
+        if (state.selectedGoals.has(name)) {
+          state.selectedGoals.delete(name);
+          chip.classList.remove('goal-chip--selected');
+        } else {
+          state.selectedGoals.add(name);
+          chip.classList.add('goal-chip--selected');
+        }
+      });
+    });
+
     form.addEventListener('submit', async (event) => {
       event.preventDefault();
       const errorEl = root.querySelector('#form-error');
       errorEl.hidden = true;
 
+      if (state.selectedGoals.size === 0) {
+        errorEl.textContent = 'Pick at least one fitness goal.';
+        errorEl.hidden = false;
+        return;
+      }
+
       const data = Object.fromEntries(new FormData(form).entries());
+      data.goal = [...state.selectedGoals].join(', ');
+
       const submitButton = form.querySelector('button[type="submit"]');
       submitButton.disabled = true;
       submitButton.textContent = 'Saving…';
@@ -138,6 +166,14 @@ function selectField(name, label, options) {
 function equipmentCard(name) {
   return `
     <button type="button" class="equipment-card" data-name="${name}">
+      <span>${name}</span>
+    </button>
+  `;
+}
+
+function goalChip(name) {
+  return `
+    <button type="button" class="goal-chip" data-name="${name}">
       <span>${name}</span>
     </button>
   `;
