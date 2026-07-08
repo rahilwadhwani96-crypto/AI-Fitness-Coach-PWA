@@ -39,8 +39,9 @@ body {
 .centered-view {
   max-width: 480px;
   margin: 0 auto;
-  min-height: 100vh;
-  min-height: 100dvh;
+  height: 100%;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
   padding: max(24px, env(safe-area-inset-top)) 20px max(40px, env(safe-area-inset-bottom));
 }
 
