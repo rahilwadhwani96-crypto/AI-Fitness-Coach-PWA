@@ -7,13 +7,17 @@ import { ICONS } from './icons.js';
  * not just within the tabbed view. Safe to call multiple times on the
  * same root (e.g. after re-rendering session screens); it won't create
  * duplicates.
+ *
+ * Pass { compact: true } on screens with no tab bar below (the workout
+ * session) so the button sits near the true bottom edge instead of
+ * leaving space for a bar that isn't there.
  */
-export function attachCoachFab(root) {
+export function attachCoachFab(root, { compact = false } = {}) {
   if (root.querySelector('.coach-fab')) return;
 
   const fab = document.createElement('button');
   fab.type = 'button';
-  fab.className = 'coach-fab';
+  fab.className = compact ? 'coach-fab coach-fab--compact' : 'coach-fab';
   fab.setAttribute('aria-label', 'Open AI Coach');
   fab.innerHTML = ICONS.coach;
   root.appendChild(fab);
