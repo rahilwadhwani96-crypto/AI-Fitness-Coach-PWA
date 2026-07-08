@@ -300,6 +300,38 @@ button:active:not(:disabled) {
 .scan-section .hint {
   margin-top: 10px;
 }
+
+.custom-equipment-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 4px;
+  margin-bottom: 8px;
+}
+
+.custom-equipment-input {
+  flex: 1;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text);
+  font-size: 14px;
+  font-family: inherit;
+}
+
+.custom-equipment-input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.custom-equipment-add {
+  width: auto;
+  margin: 0;
+  padding: 0 18px;
+  background: var(--surface);
+  color: var(--accent);
+  border: 1px solid var(--accent);
+}
 /* ---------- Tab shell ---------- */
 
 .tab-shell {
