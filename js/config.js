@@ -1,0 +1,17 @@
+/**
+ * config.js
+ *
+ * Fill these in after deploying the Apps Script backend:
+ *   - APPS_SCRIPT_URL: the "Web app URL" from Deploy > New deployment.
+ *   - API_TOKEN: the same value you put in Script Properties as API_TOKEN.
+ *
+ * API_TOKEN is a shared secret, not a real credential — it lives in
+ * plain text in this public frontend, readable by anyone who opens dev
+ * tools. It only deters casual/scanned traffic from hitting the API,
+ * it does not make the backend private. See Auth.gs on the backend for
+ * the same note.
+ */
+export const CONFIG = {
+  APPS_SCRIPT_URL: 'PASTE_YOUR_WEB_APP_URL_HERE',
+  API_TOKEN: 'PASTE_YOUR_API_TOKEN_HERE',
+};
