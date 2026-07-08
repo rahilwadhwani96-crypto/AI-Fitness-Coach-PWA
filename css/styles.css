@@ -283,6 +283,23 @@ button:active:not(:disabled) {
   color: var(--accent);
   font-weight: 600;
 }
+
+.scan-section {
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+#scan-equipment-button {
+  background: var(--surface);
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  margin-top: 0;
+}
+
+.scan-section .hint {
+  margin-top: 10px;
+}
 /* ---------- Tab shell ---------- */
 
 .tab-shell {
