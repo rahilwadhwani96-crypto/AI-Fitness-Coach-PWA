@@ -1,5 +1,6 @@
 import { callApi, ApiError } from '../api/client.js';
 import { escapeHtml } from '../utils/escapeHtml.js';
+import { attachCoachFab } from '../shell/coachFab.js';
 
 const DIFFICULTY_OPTIONS = ['Too Easy', 'Good', 'Hard', 'Very Hard'];
 
@@ -47,6 +48,8 @@ export function startWorkoutSession(appRoot, { workout, profile, onEnd }) {
       </div>
     `;
 
+    attachCoachFab(appRoot);
+
     appRoot.querySelector('#complete-exercise').addEventListener('click', () => {
       currentIndex += 1;
       if (currentIndex >= total) {
@@ -89,6 +92,8 @@ export function startWorkoutSession(appRoot, { workout, profile, onEnd }) {
         </section>
       </div>
     `;
+
+    attachCoachFab(appRoot);
 
     const timerEl = appRoot.querySelector('#rest-timer');
     const interval = setInterval(() => {
@@ -133,6 +138,8 @@ export function startWorkoutSession(appRoot, { workout, profile, onEnd }) {
         </section>
       </div>
     `;
+
+    attachCoachFab(appRoot);
 
     let selectedDifficulty = null;
     const saveButton = appRoot.querySelector('#save-workout');
