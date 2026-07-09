@@ -9,10 +9,16 @@ import { callApi, ApiError } from '../api/client.js';
  *
  * `screen` can be a string or a function (called lazily each time a
  * message is sent) — the tab shell passes a function so the Coach
- * always knows the currently active tab, even though the FAB itself is
- * only attached once at mount.
+ * always knows the currently active tab.
+ *
+ * `sessionContext.currentExercise`, if provided, tells the backend a
+ * specific exercise is being viewed, which is the only situation the
+ * Coach is allowed to propose an action in. `onAction(action,
+ * replacementExercise)` is called when the Coach's reply includes one —
+ * the caller (workoutSession.js) is responsible for actually applying
+ * it (skipping ahead, or swapping the exercise and re-rendering).
  */
-export function attachCoachFab(root, { compact = false, screen = 'general' } = {}) {
+export function attachCoachFab(root, { compact = false, screen = 'general', sessionContext = null, onAction = null } = {}) {
   if (root.querySelector('.coach-fab')) return;
 
   const fab = document.createElement('button');
@@ -22,10 +28,10 @@ export function attachCoachFab(root, { compact = false, screen = 'general' } = {
   fab.innerHTML = ICONS.coach;
   root.appendChild(fab);
 
-  fab.addEventListener('click', () => toggleCoachPanel(root, screen));
+  fab.addEventListener('click', () => toggleCoachPanel(root, screen, sessionContext, onAction));
 }
 
-function toggleCoachPanel(root, screen) {
+function toggleCoachPanel(root, screen, sessionContext, onAction) {
   const existing = root.querySelector('.coach-panel');
   if (existing) {
     existing.remove();
@@ -72,21 +78,29 @@ function toggleCoachPanel(root, screen) {
 
     try {
       const screenValue = typeof screen === 'function' ? screen() : screen;
-      const result = await callApi('coachChat', {
-        message: text,
-        history: history.slice(-10),
-        screen: screenValue,
-      });
+      const requestPayload = { message: text, history: history.slice(-10), screen: screenValue };
+      if (sessionContext && sessionContext.currentExercise) {
+        requestPayload.currentExercise = sessionContext.currentExercise;
+      }
+
+      const result = await callApi('coachChat', requestPayload);
       pendingEl.textContent = result.reply;
       history.push({ role: 'coach', text: result.reply });
+
+      if (result.action && result.action !== 'none' && typeof onAction === 'function') {
+        onAction(result.action, result.replacementExercise);
+        return; // the screen is about to re-render, which removes this panel
+      }
     } catch (err) {
       pendingEl.textContent = err instanceof ApiError ? err.message : 'Sorry, I had trouble responding. Try again.';
       pendingEl.classList.add('coach-message--error');
     } finally {
-      input.disabled = false;
-      sendButton.disabled = false;
-      input.focus();
-      messagesEl.scrollTop = messagesEl.scrollHeight;
+      if (root.contains(panel)) {
+        input.disabled = false;
+        sendButton.disabled = false;
+        input.focus();
+        messagesEl.scrollTop = messagesEl.scrollHeight;
+      }
     }
   });
 }
