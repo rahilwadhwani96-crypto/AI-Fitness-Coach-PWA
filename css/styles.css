@@ -672,7 +672,7 @@ button:active:not(:disabled) {
   left: 0;
   right: 0;
   bottom: 0;
-  max-height: 60%;
+  max-height: 70%;
   background: rgba(22, 22, 22, 0.88);
   backdrop-filter: blur(24px) saturate(1.5);
   -webkit-backdrop-filter: blur(24px) saturate(1.5);
@@ -717,4 +717,73 @@ button:active:not(:disabled) {
 .coach-panel-body {
   padding: 20px;
   overflow-y: auto;
+}
+
+.coach-messages {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.coach-message {
+  max-width: 80%;
+  padding: 10px 14px;
+  border-radius: 16px;
+  font-size: 14px;
+  line-height: 1.4;
+  white-space: pre-wrap;
+}
+
+.coach-message--coach {
+  align-self: flex-start;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-bottom-left-radius: 4px;
+}
+
+.coach-message--user {
+  align-self: flex-end;
+  background: var(--accent);
+  color: #0a0a0a;
+  border-bottom-right-radius: 4px;
+}
+
+.coach-message--error {
+  color: var(--danger);
+}
+
+.coach-input-row {
+  display: flex;
+  gap: 8px;
+  padding: 12px 20px calc(12px + env(safe-area-inset-bottom));
+  border-top: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.coach-input-row input {
+  flex: 1;
+  padding: 10px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text);
+  font-size: 14px;
+  font-family: inherit;
+}
+
+.coach-input-row input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.coach-input-row button {
+  width: auto;
+  margin: 0;
+  padding: 0 20px;
+  border-radius: 999px;
 }
