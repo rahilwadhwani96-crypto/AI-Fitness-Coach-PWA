@@ -69,7 +69,7 @@ function renderResult(container, state) {
       <dl class="details" style="margin-top:12px;">
         <dt>Estimated calories</dt><dd>${escapeHtml(a.estimatedCalories)} kcal</dd>
         <dt>Estimated protein</dt><dd>${escapeHtml(a.estimatedProtein)} g</dd>
-        <dt>Rating</dt><dd>${escapeHtml(a.rating)}</dd>
+        <dt>Rating</dt><dd>${escapeHtml(a.rating)} / 10</dd>
       </dl>
       <p class="hint" style="margin-top:12px;">${escapeHtml(a.feedback)}</p>
     </section>
