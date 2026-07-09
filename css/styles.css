@@ -451,6 +451,13 @@ button:active:not(:disabled) {
   color: var(--text-muted);
   margin-top: 4px;
 }
+
+#food-upload-photo,
+#analyze-another-button {
+  background: var(--surface);
+  color: var(--accent);
+  border: 1px solid var(--accent);
+}
 /* ---------- Tab shell ---------- */
 
 .tab-shell {
