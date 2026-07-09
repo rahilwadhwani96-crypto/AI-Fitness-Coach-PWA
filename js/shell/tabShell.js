@@ -79,7 +79,7 @@ export function renderTabShell(root, context) {
   attachSwipeHandling(panelsEl, () => activeIndex, goToIndex);
   panels.forEach((panel, i) => attachPullToRefresh(panel, scrollAreas[i], context));
 
-  attachCoachFab(root.querySelector('.tab-shell'));
+  attachCoachFab(root.querySelector('.tab-shell'), { screen: () => TABS[activeIndex].id });
 
   goToIndex(0, false);
 }
