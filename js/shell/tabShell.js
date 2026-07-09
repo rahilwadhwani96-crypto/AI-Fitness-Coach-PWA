@@ -2,14 +2,14 @@ import { ICONS } from './icons.js';
 import { attachCoachFab } from './coachFab.js';
 import { renderHome, refreshHome } from '../screens/home.js';
 import { renderWeekly, refreshWeekly } from '../screens/weekly.js';
-import { renderProgress } from '../screens/progress.js';
+import { renderProgress, refreshProgress } from '../screens/progress.js';
 import { renderFood } from '../screens/food.js';
 import { renderProfile } from '../screens/profile.js';
 
 const TABS = [
   { id: 'home', label: 'Home', icon: ICONS.home, render: renderHome, refresh: refreshHome },
   { id: 'weekly', label: 'Weekly', icon: ICONS.weekly, render: renderWeekly, refresh: refreshWeekly },
-  { id: 'progress', label: 'Progress', icon: ICONS.progress, render: renderProgress },
+  { id: 'progress', label: 'Progress', icon: ICONS.progress, render: renderProgress, refresh: refreshProgress },
   { id: 'food', label: 'Food', icon: ICONS.food, render: renderFood },
   { id: 'profile', label: 'Profile', icon: ICONS.profile, render: renderProfile },
 ];
