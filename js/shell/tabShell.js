@@ -8,7 +8,7 @@ import { renderProfile } from '../screens/profile.js';
 
 const TABS = [
   { id: 'home', label: 'Home', icon: ICONS.home, render: renderHome, refresh: refreshHome },
-  { id: 'weekly', label: 'Weekly', icon: ICONS.weekly, render: renderWeekly },
+  { id: 'weekly', label: 'Weekly', icon: ICONS.weekly, render: renderWeekly, refresh: refreshWeekly },
   { id: 'progress', label: 'Progress', icon: ICONS.progress, render: renderProgress },
   { id: 'food', label: 'Food', icon: ICONS.food, render: renderFood },
   { id: 'profile', label: 'Profile', icon: ICONS.profile, render: renderProfile },
