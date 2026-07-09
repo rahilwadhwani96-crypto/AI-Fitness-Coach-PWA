@@ -12,6 +12,6 @@
  * the same note.
  */
 export const CONFIG = {
-  APPS_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbyK7wG_kmYOKtiIMBuxoQpwQaqXW6fd2rgM1y3UAHoakHRvJhwg75S6u512LN5iaomifA/exec',
+  APPS_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbzFFYXmEJke2QPVGCkvlG5XQym9uwwF3OrymPIFWyJbjxMLhy3rpmjC3Tkw81RWusXudA/exec',
   API_TOKEN: 'fitcoach-9x7k2m4p8q1w5z3z',
 };
