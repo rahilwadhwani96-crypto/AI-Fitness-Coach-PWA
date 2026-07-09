@@ -377,6 +377,66 @@ button:active:not(:disabled) {
   font-variant-numeric: tabular-nums;
 }
 
+.progress-bar {
+  height: 10px;
+  border-radius: 999px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 999px;
+  transition: width 0.3s ease;
+}
+
+.week-calendar {
+  display: flex;
+  justify-content: space-between;
+  gap: 6px;
+}
+
+.week-day {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.week-day-label {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.week-day-dot {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--bg);
+}
+
+.week-day--completed .week-day-dot {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.week-day--progress .week-day-dot {
+  border-color: var(--accent);
+  border-style: dashed;
+}
+
+.week-day--planned .week-day-dot {
+  border-color: var(--text-muted);
+}
+
+.week-day--today .week-day-label {
+  color: var(--accent);
+  font-weight: 700;
+}
 /* ---------- Tab shell ---------- */
 
 .tab-shell {
