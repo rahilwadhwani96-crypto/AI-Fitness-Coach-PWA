@@ -1,7 +1,7 @@
 import { ICONS } from './icons.js';
 import { attachCoachFab } from './coachFab.js';
 import { renderHome, refreshHome } from '../screens/home.js';
-import { renderWeekly } from '../screens/weekly.js';
+import { renderWeekly, refreshWeekly } from '../screens/weekly.js';
 import { renderProgress } from '../screens/progress.js';
 import { renderFood } from '../screens/food.js';
 import { renderProfile } from '../screens/profile.js';
