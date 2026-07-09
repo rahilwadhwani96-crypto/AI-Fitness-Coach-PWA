@@ -51,7 +51,7 @@ export function startWorkoutSession(appRoot, { workout, profile, onEnd }) {
       </div>
     `;
 
-    attachCoachFab(appRoot, { compact: true });
+    attachCoachFab(appRoot, { compact: true, screen: `workout session — viewing exercise: ${exercise.name}` });
 
     appRoot.querySelector('#complete-exercise').addEventListener('click', () => {
       renderExerciseDifficulty(exercise.name);
@@ -93,7 +93,7 @@ export function startWorkoutSession(appRoot, { workout, profile, onEnd }) {
       </div>
     `;
 
-    attachCoachFab(appRoot, { compact: true });
+    attachCoachFab(appRoot, { compact: true, screen: `workout session — rating exercise: ${justCompletedName}` });
 
     appRoot.querySelectorAll('.goal-chip').forEach((chip) => {
       chip.addEventListener('click', () => {
@@ -124,7 +124,7 @@ export function startWorkoutSession(appRoot, { workout, profile, onEnd }) {
       </div>
     `;
 
-    attachCoachFab(appRoot, { compact: true });
+    attachCoachFab(appRoot, { compact: true, screen: `workout session — resting, next up: ${nextExercise.name}` });
 
     const timerEl = appRoot.querySelector('#rest-timer');
     const interval = setInterval(() => {
@@ -160,7 +160,7 @@ export function startWorkoutSession(appRoot, { workout, profile, onEnd }) {
       </div>
     `;
 
-    attachCoachFab(appRoot, { compact: true });
+    attachCoachFab(appRoot, { compact: true, screen: 'workout session — finished, reviewing summary' });
 
     const saveButton = appRoot.querySelector('#save-workout');
     saveButton.addEventListener('click', async () => {
