@@ -51,7 +51,25 @@ export function startWorkoutSession(appRoot, { workout, profile, onEnd }) {
       </div>
     `;
 
-    attachCoachFab(appRoot, { compact: true, screen: `workout session — viewing exercise: ${exercise.name}` });
+    attachCoachFab(appRoot, {
+      compact: true,
+      screen: `workout session — viewing exercise: ${exercise.name}`,
+      sessionContext: { currentExercise: exercise },
+      onAction: (action, replacementExercise) => {
+        if (action === 'skip_exercise') {
+          difficulties.push('Skipped');
+          currentIndex += 1;
+          if (currentIndex >= total) {
+            renderEnd();
+          } else {
+            renderRest();
+          }
+        } else if (action === 'swap_exercise' && replacementExercise) {
+          exercises[currentIndex] = Object.assign({ videoId: null }, replacementExercise);
+          renderExercise();
+        }
+      },
+    });
 
     appRoot.querySelector('#complete-exercise').addEventListener('click', () => {
       renderExerciseDifficulty(exercise.name);
