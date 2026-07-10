@@ -5,7 +5,7 @@ import { resizeImageToBase64 } from '../utils/imageResize.js';
 const MEAL_TYPES = ['Breakfast', 'Lunch', 'Dinner', 'Snack'];
 
 export function renderFood(container) {
-  const state = { analysis: null, selectedMealType: null };
+  const state = { analysis: null, selectedMealType: null, imageBase64: null, imageMimeType: null };
   renderIdle(container, state);
 }
 
@@ -39,6 +39,8 @@ async function handleFile(container, state, file) {
 
   try {
     const { base64, mimeType } = await resizeImageToBase64(file);
+    state.imageBase64 = base64;
+    state.imageMimeType = mimeType;
     const analysis = await callApi('analyzeMeal', { imageBase64: base64, mimeType });
     state.analysis = analysis;
     state.selectedMealType = null;
@@ -73,6 +75,15 @@ function renderResult(container, state) {
       </dl>
       <p class="hint" style="margin-top:12px;">${escapeHtml(a.feedback)}</p>
     </section>
+
+    <section class="card">
+      <h2>Not quite right?</h2>
+      <p class="hint">Add context and I'll take another look at the photo.</p>
+      <textarea id="correction-input" rows="2" placeholder="e.g. this is grilled not fried, or there's rice on the side too"></textarea>
+      <p class="form-error" id="correction-error" hidden></p>
+      <button type="button" id="update-analysis-button">Update analysis</button>
+    </section>
+
     <section class="card">
       <h2>Save this meal? (optional)</h2>
       <div class="goal-grid" id="meal-type-grid">
@@ -90,6 +101,51 @@ function renderResult(container, state) {
     </section>
   `;
 
+  wireCorrectionForm(container, state);
+  wireSaveForm(container, state);
+
+  container.querySelector('#analyze-another-button').addEventListener('click', () => {
+    state.analysis = null;
+    renderIdle(container, state);
+  });
+}
+
+function wireCorrectionForm(container, state) {
+  const updateButton = container.querySelector('#update-analysis-button');
+  updateButton.addEventListener('click', async () => {
+    const correctionInput = container.querySelector('#correction-input');
+    const correction = correctionInput.value.trim();
+    const errorEl = container.querySelector('#correction-error');
+    errorEl.hidden = true;
+
+    if (!correction) {
+      errorEl.textContent = 'Add a note about what to correct first.';
+      errorEl.hidden = false;
+      return;
+    }
+
+    updateButton.disabled = true;
+    updateButton.textContent = 'Updating…';
+
+    try {
+      const analysis = await callApi('analyzeMeal', {
+        imageBase64: state.imageBase64,
+        mimeType: state.imageMimeType,
+        correction: correction,
+      });
+      state.analysis = analysis;
+      renderResult(container, state);
+    } catch (err) {
+      errorEl.textContent = err instanceof ApiError ? err.message : 'Could not update the analysis. Try again.';
+      errorEl.hidden = false;
+      updateButton.disabled = false;
+      updateButton.textContent = 'Update analysis';
+    }
+  });
+}
+
+function wireSaveForm(container, state) {
+  const a = state.analysis;
   const saveButton = container.querySelector('#save-meal-button');
 
   container.querySelectorAll('.goal-chip').forEach((chip) => {
@@ -123,10 +179,5 @@ function renderResult(container, state) {
       saveButton.disabled = false;
       saveButton.textContent = 'Save meal';
     }
-  });
-
-  container.querySelector('#analyze-another-button').addEventListener('click', () => {
-    state.analysis = null;
-    renderIdle(container, state);
   });
 }
