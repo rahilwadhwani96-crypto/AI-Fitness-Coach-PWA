@@ -1,5 +1,6 @@
 import { ICONS } from './icons.js';
 import { callApi, ApiError } from '../api/client.js';
+import { resizeImageToBase64 } from '../utils/imageResize.js';
 
 /**
  * Attaches the floating AI Coach button (and its chat panel) to `root`.
@@ -12,9 +13,10 @@ import { callApi, ApiError } from '../api/client.js';
  * always knows the currently active tab.
  *
  * `sessionContext.currentExercise`, if provided, tells the backend a
- * specific exercise is being viewed, which is the only situation the
- * Coach is allowed to propose an action in. `onAction(action,
- * replacementExercise)` is called when the Coach's reply includes one.
+ * specific exercise is being viewed — the only case skip/swap actions
+ * are allowed. `onAction(action, replacementExercise)` fires for any
+ * action the Coach takes (skip/swap exercise, or an equipment update,
+ * which is available from any screen).
  */
 export function attachCoachFab(root, { compact = false, screen = 'general', sessionContext = null, onAction = null } = {}) {
   if (root.querySelector('.coach-fab')) return;
@@ -44,7 +46,13 @@ function toggleCoachPanel(root, screen, sessionContext, onAction) {
       <button type="button" class="coach-panel-close" aria-label="Close">&times;</button>
     </div>
     <div class="coach-messages" id="coach-messages"></div>
+    <div class="coach-pending-image" id="coach-pending-image" hidden>
+      <img id="coach-pending-image-preview" alt="Attached photo" />
+      <button type="button" id="coach-remove-image">Remove</button>
+    </div>
     <form class="coach-input-row" id="coach-form">
+      <input type="file" accept="image/*" id="coach-photo-input" hidden />
+      <button type="button" class="coach-attach-button" id="coach-attach-button" aria-label="Attach photo">${ICONS.camera}</button>
       <input type="text" id="coach-input" placeholder="Ask your coach…" autocomplete="off" />
       <button type="submit" id="coach-send">Send</button>
     </form>
@@ -57,12 +65,40 @@ function toggleCoachPanel(root, screen, sessionContext, onAction) {
   const form = panel.querySelector('#coach-form');
   const input = panel.querySelector('#coach-input');
   const sendButton = panel.querySelector('#coach-send');
+  const photoInput = panel.querySelector('#coach-photo-input');
+  const attachButton = panel.querySelector('#coach-attach-button');
+  const pendingImageEl = panel.querySelector('#coach-pending-image');
+  const pendingImagePreview = panel.querySelector('#coach-pending-image-preview');
+  const removeImageButton = panel.querySelector('#coach-remove-image');
   const history = [];
+  let pendingImage = null; // { base64, mimeType, previewUrl }
 
   addMessage(messagesEl, 'coach', "Hey! I'm your AI coach — ask me about your workout, nutrition, or progress.");
 
-  /** Does the actual API call for a given message. Reused by both the initial send and the retry button, so a retry never needs the user to retype anything. */
-  async function requestReply(text) {
+  attachButton.addEventListener('click', () => photoInput.click());
+
+  photoInput.addEventListener('change', async () => {
+    const file = photoInput.files[0];
+    if (!file) return;
+    try {
+      const { base64, mimeType } = await resizeImageToBase64(file);
+      pendingImage = { base64, mimeType, previewUrl: `data:${mimeType};base64,${base64}` };
+      pendingImagePreview.src = pendingImage.previewUrl;
+      pendingImageEl.hidden = false;
+    } catch (err) {
+      // Attaching a photo is optional — a failed read just means no photo, not a hard error.
+    } finally {
+      photoInput.value = '';
+    }
+  });
+
+  removeImageButton.addEventListener('click', () => {
+    pendingImage = null;
+    pendingImageEl.hidden = true;
+  });
+
+  /** Does the actual API call for a given message (+ optional image). Reused by both the initial send and the retry button, so a retry never needs the user to redo anything. */
+  async function requestReply(text, image) {
     const pendingEl = addMessage(messagesEl, 'coach', '…');
     input.disabled = true;
     sendButton.disabled = true;
@@ -73,18 +109,28 @@ function toggleCoachPanel(root, screen, sessionContext, onAction) {
       if (sessionContext && sessionContext.currentExercise) {
         requestPayload.currentExercise = sessionContext.currentExercise;
       }
+      if (image) {
+        requestPayload.imageBase64 = image.base64;
+        requestPayload.mimeType = image.mimeType;
+      }
 
       const result = await callApi('coachChat', requestPayload);
       pendingEl.textContent = result.reply;
       history.push({ role: 'coach', text: result.reply });
 
       if (result.action && result.action !== 'none' && typeof onAction === 'function') {
-        onAction(result.action, result.replacementExercise);
-        return; // the screen is about to re-render, which removes this panel
+        const exercisePayload =
+          result.action === 'swap_exercise'
+            ? result.replacementExercise
+            : result.action === 'add_exercise'
+              ? result.newExercise
+              : null;
+        onAction(result.action, exercisePayload);
+        return; // the screen may re-render as a result, which removes this panel
       }
     } catch (err) {
       const message = err instanceof ApiError ? err.message : 'Sorry, I had trouble responding.';
-      renderErrorWithRetry(pendingEl, message, () => requestReply(text));
+      renderErrorWithRetry(pendingEl, message, () => requestReply(text, image));
     } finally {
       if (root.contains(panel)) {
         input.disabled = false;
@@ -98,27 +144,49 @@ function toggleCoachPanel(root, screen, sessionContext, onAction) {
   form.addEventListener('submit', (event) => {
     event.preventDefault();
     const text = input.value.trim();
-    if (!text) return;
+    const image = pendingImage;
+    if (!text && !image) return;
 
-    addMessage(messagesEl, 'user', text);
-    history.push({ role: 'user', text });
+    addMessage(messagesEl, 'user', text, image ? image.previewUrl : null);
+    history.push({ role: 'user', text: text || '(sent a photo)' });
     input.value = '';
+    pendingImage = null;
+    pendingImageEl.hidden = true;
 
-    requestReply(text);
+    requestReply(text, image);
   });
 }
 
-/** Uses textContent (not innerHTML) — messages never need HTML-escaping, XSS-safe by construction. */
-function addMessage(messagesEl, role, text) {
+/**
+ * Uses textContent (not innerHTML) for plain messages — XSS-safe by
+ * construction. Only user messages can carry an image (the Coach never
+ * sends one back), rendered as a thumbnail above the text.
+ */
+function addMessage(messagesEl, role, text, imageDataUrl) {
   const el = document.createElement('div');
   el.className = `coach-message coach-message--${role}`;
-  el.textContent = text;
+
+  if (imageDataUrl) {
+    const img = document.createElement('img');
+    img.src = imageDataUrl;
+    img.className = 'coach-message-image';
+    img.alt = 'Attached photo';
+    el.appendChild(img);
+    if (text) {
+      const textEl = document.createElement('div');
+      textEl.textContent = text;
+      el.appendChild(textEl);
+    }
+  } else {
+    el.textContent = text;
+  }
+
   messagesEl.appendChild(el);
   messagesEl.scrollTop = messagesEl.scrollHeight;
   return el;
 }
 
-/** Turns a pending bubble into an error + Retry button, so a failed reply never requires retyping the message. */
+/** Turns a pending bubble into an error + Retry button, so a failed reply never requires redoing anything. */
 function renderErrorWithRetry(el, message, onRetry) {
   el.classList.add('coach-message--error');
   el.textContent = '';
