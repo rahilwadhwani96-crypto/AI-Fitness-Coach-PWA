@@ -14,7 +14,7 @@ const DIFFICULTY_OPTIONS = ['Too Easy', 'Good', 'Hard', 'Very Hard'];
  */
 export function startWorkoutSession(appRoot, { workout, profile, onEnd }) {
   const exercises = workout.exercises;
-  const total = exercises.length;
+  let total = exercises.length;
   const restSeconds = Number(profile.PreferredRestSeconds) || 60;
   const startedAt = Date.now();
   const difficulties = []; // one entry per exercise, same order as `exercises`
@@ -55,7 +55,7 @@ export function startWorkoutSession(appRoot, { workout, profile, onEnd }) {
       compact: true,
       screen: `workout session — viewing exercise: ${exercise.name}`,
       sessionContext: { currentExercise: exercise },
-      onAction: (action, replacementExercise) => {
+      onAction: (action, exercisePayload) => {
         if (action === 'skip_exercise') {
           difficulties.push('Skipped');
           currentIndex += 1;
@@ -64,8 +64,14 @@ export function startWorkoutSession(appRoot, { workout, profile, onEnd }) {
           } else {
             renderRest();
           }
-        } else if (action === 'swap_exercise' && replacementExercise) {
-          exercises[currentIndex] = Object.assign({ videoId: null }, replacementExercise);
+        } else if (action === 'swap_exercise' && exercisePayload) {
+          // Video is already looked up server-side by this point — no
+          // need to null it out and lose the demo video on a swap.
+          exercises[currentIndex] = exercisePayload;
+          renderExercise();
+        } else if (action === 'add_exercise' && exercisePayload) {
+          exercises.splice(currentIndex + 1, 0, exercisePayload);
+          total = exercises.length;
           renderExercise();
         }
       },
@@ -188,7 +194,10 @@ export function startWorkoutSession(appRoot, { workout, profile, onEnd }) {
       saveButton.textContent = 'Saving…';
 
       try {
-        await callApi('completeWorkout', { difficulties });
+        await callApi('completeWorkout', {
+          difficulties,
+          exercises: exercises.map((e) => ({ name: e.name, sets: e.sets, reps: e.reps })),
+        });
         onEnd();
       } catch (err) {
         errorEl.textContent = err instanceof ApiError ? err.message : 'Could not save your workout. Try again.';
