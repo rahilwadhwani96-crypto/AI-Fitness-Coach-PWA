@@ -4,6 +4,29 @@ import { startWorkoutSession } from '../session/workoutSession.js';
 
 const PHASE_LABELS = { warmup: 'Warm-up', main: 'Main workout', cooldown: 'Cool-down' };
 
+const DAILY_TIPS = [
+  'Consistency beats intensity — showing up today matters more than a perfect session.',
+  'Your only real competition is who you were yesterday.',
+  'Progress is not always visible on the scale — trust the process.',
+  'Every rep is a deposit in your future strength.',
+  'Recovery is part of training, not a break from it.',
+  'Small steps daily lead to big changes yearly.',
+  "Strength grows in the moments you don't want to continue, but do anyway.",
+  'Fuel your body like you respect it — because you do.',
+  "The best workout is the one you'll actually finish.",
+  'Discipline is choosing between what you want now and what you want most.',
+  'Form first, weight second — every time.',
+  'A short session done consistently beats a perfect session done rarely.',
+];
+
+/** Stable for the whole day (changes daily, not on every render). */
+function getDailyTip() {
+  const now = new Date();
+  const startOfYear = new Date(now.getFullYear(), 0, 0);
+  const dayOfYear = Math.floor((now - startOfYear) / 86400000);
+  return DAILY_TIPS[dayOfYear % DAILY_TIPS.length];
+}
+
 export function renderHome(container, context) {
   render(container, context, { loading: true });
   load(container, context);
@@ -68,6 +91,10 @@ function render(container, context, state) {
     <section class="card">
       <h2>Streak</h2>
       <p class="status status--ok">${streak} day${streak === 1 ? '' : 's'} in a row</p>
+    </section>
+    <section class="card">
+      <h2>Today's tip</h2>
+      <p class="hint">${escapeHtml(getDailyTip())}</p>
     </section>
   `;
 
