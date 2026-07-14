@@ -1,5 +1,6 @@
 import { escapeHtml } from '../utils/escapeHtml.js';
 import { callApi, ApiError } from '../api/client.js';
+import { resizeImageToBase64 } from '../utils/imageResize.js';
 
 export function renderProgress(container) {
   render(container, { loading: true });
@@ -89,10 +90,33 @@ function render(container, state) {
         <button type="submit">Save goal</button>
       </form>
     </section>
+
+    <section class="card">
+      <h2>Compare progress photos</h2>
+      <p class="hint">Upload an old and a new photo — nothing is saved, they're only compared right now.</p>
+      <div class="photo-compare-row">
+        <div class="photo-compare-slot">
+          <label class="hint">Old photo</label>
+          <div class="photo-compare-image" id="photo-old-preview"><p class="hint">No photo selected</p></div>
+          <input type="file" accept="image/*" id="photo-old-input" hidden />
+          <button type="button" id="photo-old-button">Choose photo</button>
+        </div>
+        <div class="photo-compare-slot">
+          <label class="hint">New photo</label>
+          <div class="photo-compare-image" id="photo-new-preview"><p class="hint">No photo selected</p></div>
+          <input type="file" accept="image/*" capture="environment" id="photo-new-input" hidden />
+          <button type="button" id="photo-new-button">Take / choose photo</button>
+        </div>
+      </div>
+      <p class="form-error" id="photo-compare-error" hidden></p>
+      <button type="button" id="compare-photos-button" disabled>Compare photos</button>
+      <div id="photo-comparison-result"></div>
+    </section>
   `;
 
   wireWeightForm(container);
   wireGoalForm(container);
+  wirePhotoCompareSection(container);
 }
 
 function wireWeightForm(container) {
@@ -141,6 +165,74 @@ function wireGoalForm(container) {
       submitButton.textContent = 'Save goal';
     }
   });
+}
+
+function wirePhotoCompareSection(container) {
+  const state = { oldPhoto: null, newPhoto: null };
+
+  const oldInput = container.querySelector('#photo-old-input');
+  const newInput = container.querySelector('#photo-new-input');
+  const compareButton = container.querySelector('#compare-photos-button');
+
+  container.querySelector('#photo-old-button').addEventListener('click', () => oldInput.click());
+  container.querySelector('#photo-new-button').addEventListener('click', () => newInput.click());
+
+  oldInput.addEventListener('change', () =>
+    handlePhotoSelect(container, state, 'oldPhoto', 'photo-old-preview', oldInput.files[0], compareButton)
+  );
+  newInput.addEventListener('change', () =>
+    handlePhotoSelect(container, state, 'newPhoto', 'photo-new-preview', newInput.files[0], compareButton)
+  );
+
+  compareButton.addEventListener('click', () => runComparison(container, state, compareButton));
+}
+
+async function handlePhotoSelect(container, state, key, previewId, file, compareButton) {
+  if (!file) return;
+  try {
+    const { base64, mimeType } = await resizeImageToBase64(file);
+    state[key] = { base64, mimeType, previewUrl: `data:${mimeType};base64,${base64}` };
+    container.querySelector(`#${previewId}`).innerHTML = `<img src="${state[key].previewUrl}" alt="" />`;
+    compareButton.disabled = !(state.oldPhoto && state.newPhoto);
+  } catch (err) {
+    // Selecting a photo failing just leaves that slot empty — not worth a hard error state.
+  }
+}
+
+async function runComparison(container, state, compareButton) {
+  const errorEl = container.querySelector('#photo-compare-error');
+  const resultEl = container.querySelector('#photo-comparison-result');
+  errorEl.hidden = true;
+  compareButton.disabled = true;
+  compareButton.textContent = 'Comparing…';
+  resultEl.innerHTML = '';
+
+  try {
+    const result = await callApi('compareProgressPhotos', {
+      beforeImageBase64: state.oldPhoto.base64,
+      beforeMimeType: state.oldPhoto.mimeType,
+      afterImageBase64: state.newPhoto.base64,
+      afterMimeType: state.newPhoto.mimeType,
+    });
+
+    const observationsHtml =
+      result.observations && result.observations.length
+        ? `<ul class="equipment-list" style="margin-top:10px;">${result.observations
+            .map((o) => `<li>${escapeHtml(o)}</li>`)
+            .join('')}</ul>`
+        : '';
+
+    resultEl.innerHTML = `
+      <p class="hint" style="margin-top:14px;">${escapeHtml(result.comparison)}</p>
+      ${observationsHtml}
+    `;
+  } catch (err) {
+    errorEl.textContent = err instanceof ApiError ? err.message : 'Could not compare those photos. Try again.';
+    errorEl.hidden = false;
+  } finally {
+    compareButton.disabled = false;
+    compareButton.textContent = 'Compare photos';
+  }
 }
 
 function renderWeightChart(entries) {
