@@ -62,6 +62,67 @@
   --danger: #e5342b;
 }
 
+/* Frost — icy blue-white, glossy shimmer on primary buttons */
+[data-theme="frost"] {
+  color-scheme: light;
+  --bg: #eaf6fb;
+  --surface: #dcf0f8;
+  --border: #bfe3f0;
+  --text: #14313d;
+  --text-muted: #5c7d8a;
+  --accent: #38bdf8;
+  --accent-contrast: #06222e;
+  --danger: #e5342b;
+}
+
+[data-theme="frost"] button:not(:disabled),
+[data-theme="frost"] .coach-fab {
+  background: linear-gradient(120deg, var(--accent), #bdf0ff, var(--accent));
+  background-size: 220% 100%;
+  animation: frost-shimmer 3.5s ease-in-out infinite;
+}
+
+@keyframes frost-shimmer {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* Lava — warm beige base, glowing pulse on primary buttons */
+[data-theme="lava"] {
+  color-scheme: light;
+  --bg: #f7ece0;
+  --surface: #f0dcc7;
+  --border: #e0c19f;
+  --text: #3a2314;
+  --text-muted: #8a6a4e;
+  --accent: #ff5722;
+  --accent-contrast: #2a0e02;
+  --danger: #c62828;
+}
+
+[data-theme="lava"] button:not(:disabled),
+[data-theme="lava"] .coach-fab {
+  background: linear-gradient(135deg, #ff5722, #ffb300);
+  animation: lava-glow 2.4s ease-in-out infinite;
+}
+
+@keyframes lava-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 6px rgba(255, 87, 34, 0.35);
+  }
+  50% {
+    box-shadow: 0 0 18px rgba(255, 152, 0, 0.65);
+  }
+}
+
 * {
   box-sizing: border-box;
 }
@@ -591,49 +652,77 @@ textarea:focus {
   color: var(--text-muted);
 }
 
-.theme-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
+.theme-select {
+  position: relative;
+}
+
+.theme-select-button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-weight: 500;
+  margin-top: 0;
+}
+
+.theme-select-current {
+  display: flex;
+  align-items: center;
   gap: 10px;
 }
 
-.theme-swatch {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  padding: 14px 8px;
-  border-radius: 12px;
-  border: 1px solid var(--border);
-  background: var(--bg);
-  margin: 0;
-  cursor: pointer;
-  transition: border-color 0.2s ease, transform 0.12s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-.theme-swatch:active {
-  transform: scale(0.95);
-}
-
-.theme-swatch-dot {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  border: 2px solid rgba(255, 255, 255, 0.15);
-}
-
-.theme-swatch-label {
-  font-size: 12px;
+.theme-select-chevron {
   color: var(--text-muted);
 }
 
-.theme-swatch--active {
-  border-color: var(--accent);
+.theme-dropdown {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  z-index: 4;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
 }
 
-.theme-swatch--active .theme-swatch-label {
+.theme-option {
+  width: 100%;
+  margin: 0;
+  padding: 12px 14px;
+  background: none;
+  border: none;
+  border-radius: 0;
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 400;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.theme-option:not(:last-child) {
+  border-bottom: 1px solid var(--border);
+}
+
+.theme-option--active {
+  background: rgba(255, 122, 41, 0.1);
   color: var(--accent);
   font-weight: 600;
+}
+
+.theme-swatch-dot {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.15);
+  flex-shrink: 0;
+  display: inline-block;
 }
 
 #food-upload-photo,
