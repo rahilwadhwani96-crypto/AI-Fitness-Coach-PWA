@@ -1,6 +1,7 @@
 import { escapeHtml } from '../utils/escapeHtml.js';
 import { callApi, ApiError } from '../api/client.js';
 import { renderEquipmentPicker } from '../shell/equipmentPicker.js';
+import { THEME_LIST, setTheme, getCurrentTheme } from '../shell/theme.js';
 
 export function renderProfile(container, { profile, equipment }) {
   const rows = [
@@ -29,6 +30,12 @@ export function renderProfile(container, { profile, equipment }) {
       <p class="form-error" id="equipment-save-error" hidden></p>
       <button type="button" id="save-equipment-button">Save changes</button>
     </section>
+    <section class="card">
+      <h2>Theme</h2>
+      <div class="theme-grid" id="theme-grid">
+        ${THEME_LIST.map((theme) => themeSwatch(theme)).join('')}
+      </div>
+    </section>
   `;
 
   const picker = renderEquipmentPicker(container.querySelector('#equipment-picker'), equipment);
@@ -53,5 +60,29 @@ export function renderProfile(container, { profile, equipment }) {
       saveButton.disabled = false;
       saveButton.textContent = 'Save changes';
     }
+  });
+
+  markActiveTheme(container);
+  container.querySelectorAll('.theme-swatch').forEach((swatchEl) => {
+    swatchEl.addEventListener('click', () => {
+      setTheme(swatchEl.dataset.theme);
+      markActiveTheme(container);
+    });
+  });
+}
+
+function themeSwatch(theme) {
+  return `
+    <button type="button" class="theme-swatch" data-theme="${theme.id}">
+      <span class="theme-swatch-dot" style="background:${theme.swatch}"></span>
+      <span class="theme-swatch-label">${theme.label}</span>
+    </button>
+  `;
+}
+
+function markActiveTheme(container) {
+  const current = getCurrentTheme();
+  container.querySelectorAll('.theme-swatch').forEach((swatchEl) => {
+    swatchEl.classList.toggle('theme-swatch--active', swatchEl.dataset.theme === current);
   });
 }
