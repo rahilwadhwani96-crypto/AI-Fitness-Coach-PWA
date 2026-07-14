@@ -8,6 +8,7 @@
   --accent: #ff7a29;  /* orange — primary interactive color */
   --accent-contrast: #0a0a0a; /* text/icon color used on top of accent-colored buttons */
   --danger: #e5342b;  /* red — reserved for errors/destructive actions */
+  --glass-bg: rgba(22, 22, 22, 0.86); /* dock/chat-panel background — must match each theme's surface tone */
 }
 
 /* Ice Cream — light pink & beige, playful */
@@ -21,6 +22,7 @@
   --accent: #ff7aa8;
   --accent-contrast: #3a1f28;
   --danger: #e0505a;
+  --glass-bg: rgba(255, 238, 244, 0.9);
 }
 
 /* Ocean — deep blue accent, same dark base */
@@ -34,6 +36,7 @@
   --accent: #3fa9f5;
   --accent-contrast: #05141f;
   --danger: #e5342b;
+  --glass-bg: rgba(19, 27, 38, 0.88);
 }
 
 /* Forest — green accent, same dark base */
@@ -47,6 +50,7 @@
   --accent: #4caf7d;
   --accent-contrast: #06170d;
   --danger: #e5342b;
+  --glass-bg: rgba(19, 28, 21, 0.88);
 }
 
 /* Sunset — violet accent, same dark base */
@@ -60,6 +64,7 @@
   --accent: #b47ee5;
   --accent-contrast: #170f1c;
   --danger: #e5342b;
+  --glass-bg: rgba(26, 20, 32, 0.88);
 }
 
 /* Frost — icy blue-white, glossy shimmer on primary buttons */
@@ -73,9 +78,9 @@
   --accent: #38bdf8;
   --accent-contrast: #06222e;
   --danger: #e5342b;
+  --glass-bg: rgba(220, 240, 248, 0.9);
 }
 
-[data-theme="frost"] button:not(:disabled),
 [data-theme="frost"] .coach-fab {
   background: linear-gradient(120deg, var(--accent), #bdf0ff, var(--accent));
   background-size: 220% 100%;
@@ -105,9 +110,9 @@
   --accent: #ff5722;
   --accent-contrast: #2a0e02;
   --danger: #c62828;
+  --glass-bg: rgba(240, 220, 199, 0.9);
 }
 
-[data-theme="lava"] button:not(:disabled),
 [data-theme="lava"] .coach-fab {
   background: linear-gradient(135deg, #ff5722, #ffb300);
   animation: lava-glow 2.4s ease-in-out infinite;
@@ -677,17 +682,60 @@ textarea:focus {
   color: var(--text-muted);
 }
 
-.theme-dropdown {
-  position: absolute;
-  top: calc(100% + 6px);
-  left: 0;
-  right: 0;
+.theme-sheet-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 50;
+  display: flex;
+  align-items: flex-end;
+}
+
+.theme-sheet {
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
   background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  overflow: hidden;
-  z-index: 4;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  border-top: 1px solid var(--border);
+  border-radius: 20px 20px 0 0;
+  padding-bottom: env(safe-area-inset-bottom, 12px);
+  max-height: 70vh;
+  overflow-y: auto;
+  animation: theme-sheet-in 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes theme-sheet-in {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.theme-sheet-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+  border-bottom: 1px solid var(--border);
+}
+
+.theme-sheet-close {
+  width: auto;
+  margin: 0;
+  padding: 4px 8px;
+  background: none;
+  color: var(--text-muted);
+  font-size: 18px;
+  line-height: 1;
+}
+
+.theme-sheet-list {
+  padding: 6px 0;
 }
 
 .theme-option {
@@ -736,8 +784,7 @@ textarea:focus {
 
 .tab-shell {
   position: relative;
-  height: 100vh;
-  height: 100dvh;
+  height: 100%;
   max-width: 480px;
   margin: 0 auto;
   overflow: hidden;
@@ -848,7 +895,7 @@ textarea:focus {
   right: 0;
   bottom: 0;
   display: flex;
-  background: rgba(22, 22, 22, 0.86);
+  background: var(--glass-bg);
   backdrop-filter: blur(20px) saturate(1.5);
   -webkit-backdrop-filter: blur(20px) saturate(1.5);
   border-top: 1px solid var(--border);
@@ -947,7 +994,7 @@ textarea:focus {
   right: 0;
   bottom: 0;
   max-height: 78%;
-  background: rgba(22, 22, 22, 0.88);
+  background: var(--glass-bg);
   backdrop-filter: blur(24px) saturate(1.5);
   -webkit-backdrop-filter: blur(24px) saturate(1.5);
   border-top: 1px solid var(--border);
