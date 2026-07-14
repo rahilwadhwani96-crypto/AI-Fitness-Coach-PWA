@@ -2,6 +2,8 @@ import { escapeHtml } from '../utils/escapeHtml.js';
 import { callApi, ApiError } from '../api/client.js';
 import { startWorkoutSession } from '../session/workoutSession.js';
 
+const PHASE_LABELS = { warmup: 'Warm-up', main: 'Main workout', cooldown: 'Cool-down' };
+
 export function renderHome(container, context) {
   render(container, context, { loading: true });
   load(container, context);
@@ -59,8 +61,8 @@ function render(container, context, state) {
       <dl class="details">
         <dt>Workout type</dt><dd>${escapeHtml(workout.workoutType)}</dd>
         <dt>Estimated duration</dt><dd>${escapeHtml(workout.estimatedDurationMinutes)} min</dd>
-        <dt>Exercises</dt><dd>${workout.exercises.length}</dd>
       </dl>
+      ${renderPhaseSummary(workout.exercises)}
       ${renderActionButton(status)}
     </section>
     <section class="card">
@@ -79,6 +81,30 @@ function render(container, context, state) {
       });
     });
   }
+}
+
+/** Groups today's exercises into warm-up / main / cool-down for a quick preview before starting. */
+function renderPhaseSummary(exercises) {
+  const phases = ['warmup', 'main', 'cooldown'];
+  const grouped = phases.map((phase) => ({
+    phase,
+    items: exercises.filter((e) => (e.phase || 'main') === phase),
+  }));
+
+  return `
+    <div class="phase-summary">
+      ${grouped
+        .map(
+          ({ phase, items }) => `
+        <div class="phase-summary-row">
+          <span class="phase-summary-label">${PHASE_LABELS[phase]}</span>
+          <span class="phase-summary-count">${items.length ? items.length + ' exercise' + (items.length === 1 ? '' : 's') : '–'}</span>
+        </div>
+      `
+        )
+        .join('')}
+    </div>
+  `;
 }
 
 function renderActionButton(status) {
