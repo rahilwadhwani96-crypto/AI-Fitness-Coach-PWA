@@ -2,6 +2,7 @@ import { callApi, ApiError } from './api/client.js';
 import { renderOnboarding } from './screens/onboarding.js';
 import { renderTabShell } from './shell/tabShell.js';
 import { escapeHtml } from './utils/escapeHtml.js';
+import { applyStoredTheme } from './shell/theme.js';
 
 const root = document.getElementById('app-root');
 
@@ -9,7 +10,7 @@ async function bootstrap() {
   renderLoading();
   try {
     const status = await callApi('getOnboardingStatus');
-   if (status.completed) {
+    if (status.completed) {
       renderTabShell(root, {
         profile: status.profile,
         equipment: status.equipment,
@@ -17,7 +18,6 @@ async function bootstrap() {
         restartApp: bootstrap,
       });
     } else {
-     
       renderOnboarding(root, { onComplete: bootstrap });
     }
   } catch (err) {
@@ -57,5 +57,6 @@ function registerServiceWorker() {
   });
 }
 
+applyStoredTheme();
 registerServiceWorker();
 bootstrap();
