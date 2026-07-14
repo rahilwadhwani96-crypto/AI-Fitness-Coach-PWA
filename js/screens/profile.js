@@ -32,8 +32,24 @@ export function renderProfile(container, { profile, equipment }) {
     </section>
     <section class="card">
       <h2>Theme</h2>
-      <div class="theme-grid" id="theme-grid">
-        ${THEME_LIST.map((theme) => themeSwatch(theme)).join('')}
+      <div class="theme-select" id="theme-select">
+        <button type="button" class="theme-select-button" id="theme-select-button">
+          <span class="theme-select-current">
+            <span class="theme-swatch-dot" id="theme-select-dot"></span>
+            <span id="theme-select-label"></span>
+          </span>
+          <span class="theme-select-chevron">&#9662;</span>
+        </button>
+        <div class="theme-dropdown" id="theme-dropdown" hidden>
+          ${THEME_LIST.map(
+            (theme) => `
+            <button type="button" class="theme-option" data-theme="${theme.id}">
+              <span class="theme-swatch-dot" style="background:${theme.swatch}"></span>
+              <span>${theme.label}</span>
+            </button>
+          `
+          ).join('')}
+        </div>
       </div>
     </section>
   `;
@@ -62,27 +78,44 @@ export function renderProfile(container, { profile, equipment }) {
     }
   });
 
-  markActiveTheme(container);
-  container.querySelectorAll('.theme-swatch').forEach((swatchEl) => {
-    swatchEl.addEventListener('click', () => {
-      setTheme(swatchEl.dataset.theme);
-      markActiveTheme(container);
+  setupThemeDropdown(container);
+}
+
+function setupThemeDropdown(container) {
+  const wrapper = container.querySelector('#theme-select');
+  const button = container.querySelector('#theme-select-button');
+  const dropdown = container.querySelector('#theme-dropdown');
+  const dotEl = container.querySelector('#theme-select-dot');
+  const labelEl = container.querySelector('#theme-select-label');
+
+  function updateCurrentDisplay() {
+    const current = getCurrentTheme();
+    const theme = THEME_LIST.find((t) => t.id === current) || THEME_LIST[0];
+    dotEl.style.background = theme.swatch;
+    labelEl.textContent = theme.label;
+    container.querySelectorAll('.theme-option').forEach((opt) => {
+      opt.classList.toggle('theme-option--active', opt.dataset.theme === theme.id);
+    });
+  }
+
+  button.addEventListener('click', (event) => {
+    event.stopPropagation();
+    dropdown.hidden = !dropdown.hidden;
+  });
+
+  container.querySelectorAll('.theme-option').forEach((opt) => {
+    opt.addEventListener('click', () => {
+      setTheme(opt.dataset.theme);
+      updateCurrentDisplay();
+      dropdown.hidden = true;
     });
   });
-}
 
-function themeSwatch(theme) {
-  return `
-    <button type="button" class="theme-swatch" data-theme="${theme.id}">
-      <span class="theme-swatch-dot" style="background:${theme.swatch}"></span>
-      <span class="theme-swatch-label">${theme.label}</span>
-    </button>
-  `;
-}
-
-function markActiveTheme(container) {
-  const current = getCurrentTheme();
-  container.querySelectorAll('.theme-swatch').forEach((swatchEl) => {
-    swatchEl.classList.toggle('theme-swatch--active', swatchEl.dataset.theme === current);
+  document.addEventListener('click', (event) => {
+    if (!wrapper.contains(event.target)) {
+      dropdown.hidden = true;
+    }
   });
+
+  updateCurrentDisplay();
 }
