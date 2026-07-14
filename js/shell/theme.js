@@ -6,6 +6,8 @@ export const THEME_LIST = [
   { id: 'ocean', label: 'Ocean', swatch: '#3fa9f5' },
   { id: 'forest', label: 'Forest', swatch: '#4caf7d' },
   { id: 'sunset', label: 'Sunset', swatch: '#b47ee5' },
+  { id: 'frost', label: 'Frost', swatch: '#38bdf8' },
+  { id: 'lava', label: 'Lava', swatch: '#ff5722' },
 ];
 
 const VALID_THEME_IDS = THEME_LIST.map((t) => t.id);
