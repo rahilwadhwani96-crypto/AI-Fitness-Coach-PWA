@@ -32,9 +32,12 @@ export function startWorkoutSession(appRoot, { workout, profile, onEnd }) {
 
   function renderExercise() {
     const exercise = exercises[currentIndex];
+    const phaseLabels = { warmup: 'Warm-up', main: 'Main workout', cooldown: 'Cool-down' };
+    const phaseLabel = phaseLabels[exercise.phase] || 'Main workout';
+
     appRoot.innerHTML = `
       <div class="centered-view">
-        <p class="step-indicator">Exercise ${currentIndex + 1} of ${total}</p>
+        <p class="step-indicator">${phaseLabel} · Exercise ${currentIndex + 1} of ${total}</p>
         <section class="card">
           <h1 class="screen-title">${escapeHtml(exercise.name)}</h1>
           <dl class="details">
