@@ -32,7 +32,7 @@ export function renderProfile(container, { profile, equipment }) {
     </section>
     <section class="card">
       <h2>Theme</h2>
-      <div class="theme-select" id="theme-select">
+      <div class="theme-select">
         <button type="button" class="theme-select-button" id="theme-select-button">
           <span class="theme-select-current">
             <span class="theme-swatch-dot" id="theme-select-dot"></span>
@@ -40,16 +40,6 @@ export function renderProfile(container, { profile, equipment }) {
           </span>
           <span class="theme-select-chevron">&#9662;</span>
         </button>
-        <div class="theme-dropdown" id="theme-dropdown" hidden>
-          ${THEME_LIST.map(
-            (theme) => `
-            <button type="button" class="theme-option" data-theme="${theme.id}">
-              <span class="theme-swatch-dot" style="background:${theme.swatch}"></span>
-              <span>${theme.label}</span>
-            </button>
-          `
-          ).join('')}
-        </div>
       </div>
     </section>
   `;
@@ -78,13 +68,10 @@ export function renderProfile(container, { profile, equipment }) {
     }
   });
 
-  setupThemeDropdown(container);
+  setupThemePicker(container);
 }
 
-function setupThemeDropdown(container) {
-  const wrapper = container.querySelector('#theme-select');
-  const button = container.querySelector('#theme-select-button');
-  const dropdown = container.querySelector('#theme-dropdown');
+function setupThemePicker(container) {
   const dotEl = container.querySelector('#theme-select-dot');
   const labelEl = container.querySelector('#theme-select-label');
 
@@ -93,29 +80,67 @@ function setupThemeDropdown(container) {
     const theme = THEME_LIST.find((t) => t.id === current) || THEME_LIST[0];
     dotEl.style.background = theme.swatch;
     labelEl.textContent = theme.label;
-    container.querySelectorAll('.theme-option').forEach((opt) => {
-      opt.classList.toggle('theme-option--active', opt.dataset.theme === theme.id);
-    });
   }
 
-  button.addEventListener('click', (event) => {
-    event.stopPropagation();
-    dropdown.hidden = !dropdown.hidden;
-  });
-
-  container.querySelectorAll('.theme-option').forEach((opt) => {
-    opt.addEventListener('click', () => {
-      setTheme(opt.dataset.theme);
-      updateCurrentDisplay();
-      dropdown.hidden = true;
-    });
-  });
-
-  document.addEventListener('click', (event) => {
-    if (!wrapper.contains(event.target)) {
-      dropdown.hidden = true;
-    }
+  container.querySelector('#theme-select-button').addEventListener('click', () => {
+    openThemeSheet(updateCurrentDisplay);
   });
 
   updateCurrentDisplay();
+}
+
+/**
+ * Renders as a bottom sheet attached directly to document.body — NOT
+ * nested inside the tab shell's swipeable panel. That panel is moved
+ * via a CSS transform (for the swipe animation), and a transformed
+ * ancestor creates a new containing block, which silently breaks any
+ * fixed-position child inside it (it stops measuring against the real
+ * screen). Attaching to body sidesteps that entirely, so every theme
+ * option — including ones near the end of the list — is always fully
+ * reachable regardless of where the underlying page is scrolled.
+ */
+function openThemeSheet(onChange) {
+  const overlay = document.createElement('div');
+  overlay.className = 'theme-sheet-overlay';
+
+  const sheet = document.createElement('div');
+  sheet.className = 'theme-sheet';
+  sheet.innerHTML = `
+    <div class="theme-sheet-header">
+      <span>Choose a theme</span>
+      <button type="button" class="theme-sheet-close" aria-label="Close">&times;</button>
+    </div>
+    <div class="theme-sheet-list">
+      ${THEME_LIST.map(
+        (theme) => `
+        <button type="button" class="theme-option" data-theme="${theme.id}">
+          <span class="theme-swatch-dot" style="background:${theme.swatch}"></span>
+          <span>${theme.label}</span>
+        </button>
+      `
+      ).join('')}
+    </div>
+  `;
+
+  overlay.appendChild(sheet);
+  document.body.appendChild(overlay);
+
+  function close() {
+    overlay.remove();
+  }
+
+  overlay.addEventListener('click', (event) => {
+    if (event.target === overlay) close();
+  });
+  sheet.querySelector('.theme-sheet-close').addEventListener('click', close);
+
+  const currentTheme = getCurrentTheme();
+  sheet.querySelectorAll('.theme-option').forEach((opt) => {
+    opt.classList.toggle('theme-option--active', opt.dataset.theme === currentTheme);
+    opt.addEventListener('click', () => {
+      setTheme(opt.dataset.theme);
+      onChange();
+      close();
+    });
+  });
 }
