@@ -3,11 +3,10 @@ const STORAGE_KEY = 'fitcoach-theme';
 export const THEME_LIST = [
   { id: 'dark', label: 'Default', swatch: '#ff7a29' },
   { id: 'icecream', label: 'Ice Cream', swatch: '#ff7aa8' },
-  { id: 'ocean', label: 'Ocean', swatch: '#3fa9f5' },
-  { id: 'forest', label: 'Forest', swatch: '#4caf7d' },
-  { id: 'sunset', label: 'Sunset', swatch: '#b47ee5' },
   { id: 'frost', label: 'Frost', swatch: '#38bdf8' },
   { id: 'lava', label: 'Lava', swatch: '#ff5722' },
+  { id: 'kobrakai', label: 'Kobra Kai', swatch: '#e0201e' },
+  { id: 'naruto', label: 'Naruto', swatch: '#ff7a1a' },
 ];
 
 const VALID_THEME_IDS = THEME_LIST.map((t) => t.id);
