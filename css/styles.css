@@ -25,7 +25,8 @@
   --glass-bg: rgba(255, 238, 244, 0.9);
 }
 
-[data-theme="icecream"] body {
+[data-theme="icecream"] .tab-shell,
+[data-theme="icecream"] .centered-view {
   background-image: repeating-linear-gradient(
     135deg,
     rgba(255, 122, 168, 0.05) 0px,
@@ -225,9 +226,13 @@
   --glass-bg: rgba(20, 16, 10, 0.9);
 }
 
-[data-theme="darksouls"] body {
-  background-image: radial-gradient(circle at 50% 25%, rgba(212, 120, 10, 0.08), transparent 60%),
-    repeating-linear-gradient(180deg, rgba(0, 0, 0, 0.15) 0px, rgba(0, 0, 0, 0.15) 2px, transparent 2px, transparent 4px);
+[data-theme="darksouls"] .tab-shell,
+[data-theme="darksouls"] .centered-view {
+  background-color: var(--bg);
+  background-image: radial-gradient(circle at 50% 25%, rgba(212, 120, 10, 0.1), transparent 60%),
+    url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI3MCIgaGVpZ2h0PSI3MCIgdmlld0JveD0iMCAwIDcwIDcwIj4KPHJlY3QgeD0iMzMiIHk9IjYiIHdpZHRoPSI0IiBoZWlnaHQ9IjM0IiBmaWxsPSIjZDQ3ODBhIiBvcGFjaXR5PSIwLjE2Ii8+CjxyZWN0IHg9IjIyIiB5PSI0MCIgd2lkdGg9IjI2IiBoZWlnaHQ9IjQiIGZpbGw9IiNkNDc4MGEiIG9wYWNpdHk9IjAuMTYiLz4KPHJlY3QgeD0iMzEiIHk9IjQ0IiB3aWR0aD0iOCIgaGVpZ2h0PSIxNiIgZmlsbD0iI2Q0NzgwYSIgb3BhY2l0eT0iMC4xNiIvPgo8Y2lyY2xlIGN4PSIzNSIgY3k9IjYyIiByPSIzIiBmaWxsPSIjZDQ3ODBhIiBvcGFjaXR5PSIwLjE2Ii8+Cjwvc3ZnPg==');
+  background-size: cover, 90px 90px;
+  background-repeat: no-repeat, repeat;
 }
 
 [data-theme="darksouls"] .card::before {
@@ -266,7 +271,7 @@
   }
 }
 
-/* UFC — black/red, cage-fence texture, sharp fight-night pulse */
+/* UFC — black/red, octagon-outline pattern, sharp fight-night pulse */
 [data-theme="ufc"] {
   color-scheme: dark;
   --bg: #0c0c0d;
@@ -280,15 +285,12 @@
   --glass-bg: rgba(10, 10, 10, 0.9);
 }
 
-[data-theme="ufc"] body {
-  background-image: repeating-linear-gradient(
-      45deg,
-      rgba(210, 10, 10, 0.04) 0px,
-      rgba(210, 10, 10, 0.04) 1px,
-      transparent 1px,
-      transparent 26px
-    ),
-    repeating-linear-gradient(-45deg, rgba(210, 10, 10, 0.04) 0px, rgba(210, 10, 10, 0.04) 1px, transparent 1px, transparent 26px);
+[data-theme="ufc"] .tab-shell,
+[data-theme="ufc"] .centered-view {
+  background-color: var(--bg);
+  background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI3MCIgaGVpZ2h0PSI3MCIgdmlld0JveD0iMCAwIDYwIDYwIj4KPHBvbHlnb24gcG9pbnRzPSI1NiwzMCA0OC40LDQ4LjQgMzAsNTYgMTEuNiw0OC40IDQsMzAgMTEuNiwxMS42IDMwLDQgNDguNCwxMS42IiBmaWxsPSJub25lIiBzdHJva2U9IiNkMjBhMGEiIHN0cm9rZS13aWR0aD0iMS41IiBvcGFjaXR5PSIwLjE0Ii8+Cjwvc3ZnPg==');
+  background-size: 90px 90px;
+  background-repeat: repeat;
 }
 
 [data-theme="ufc"] .card::before {
@@ -318,7 +320,7 @@
   }
 }
 
-/* Undisputed Era — sleek black/gold, premium slow shimmer */
+/* Undisputed Era — sleek black/gold, diamond-plate pattern, premium slow shimmer */
 [data-theme="undisputed"] {
   color-scheme: dark;
   --bg: #0a0a0c;
@@ -332,8 +334,13 @@
   --glass-bg: rgba(20, 20, 22, 0.9);
 }
 
-[data-theme="undisputed"] body {
-  background-image: linear-gradient(120deg, transparent 40%, rgba(201, 162, 39, 0.06) 50%, transparent 60%);
+[data-theme="undisputed"] .tab-shell,
+[data-theme="undisputed"] .centered-view {
+  background-color: var(--bg);
+  background-image: linear-gradient(120deg, transparent 40%, rgba(201, 162, 39, 0.07) 50%, transparent 60%),
+    url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI3MCIgaGVpZ2h0PSI3MCIgdmlld0JveD0iMCAwIDYwIDYwIj4KPHJlY3QgeD0iMTgiIHk9IjE4IiB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2M5YTIyNyIgc3Ryb2tlLXdpZHRoPSIxLjUiIG9wYWNpdHk9IjAuMTQiIHRyYW5zZm9ybT0icm90YXRlKDQ1IDMwIDMwKSIvPgo8Y2lyY2xlIGN4PSIzMCIgY3k9IjMwIiByPSIzIiBmaWxsPSIjYzlhMjI3IiBvcGFjaXR5PSIwLjE2Ii8+Cjwvc3ZnPg==');
+  background-size: cover, 90px 90px;
+  background-repeat: no-repeat, repeat;
 }
 
 [data-theme="undisputed"] .card::before {
@@ -354,7 +361,95 @@
   animation: theme-shimmer 4.5s ease-in-out infinite;
 }
 
-* {
+/* Harry Potter — parchment & deep maroon, generic wand + sparkle motif */
+[data-theme="harrypotter"] {
+  color-scheme: dark;
+  --bg: #140d08;
+  --surface: #241811;
+  --border: #4a3018;
+  --text: #f0e6d2;
+  --text-muted: #b0a084;
+  --accent: #c9a227;
+  --accent-contrast: #1a1408;
+  --danger: #8b1a1a;
+  --glass-bg: rgba(20, 13, 8, 0.9);
+}
+
+[data-theme="harrypotter"] .tab-shell,
+[data-theme="harrypotter"] .centered-view {
+  background-color: var(--bg);
+  background-image: radial-gradient(circle at 50% 20%, rgba(139, 26, 26, 0.12), transparent 55%),
+    url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI3MCIgaGVpZ2h0PSI3MCIgdmlld0JveD0iMCAwIDYwIDYwIj4KPGxpbmUgeDE9IjEwIiB5MT0iNTIiIHgyPSI0NiIgeTI9IjE0IiBzdHJva2U9IiNjOWEyMjciIHN0cm9rZS13aWR0aD0iMiIgb3BhY2l0eT0iMC4xNSIvPgo8Y2lyY2xlIGN4PSI0OCIgY3k9IjEyIiByPSIyLjUiIGZpbGw9IiNjOWEyMjciIG9wYWNpdHk9IjAuMTgiLz4KPGxpbmUgeDE9IjQ4IiB5MT0iNCIgeDI9IjQ4IiB5Mj0iOCIgc3Ryb2tlPSIjYzlhMjI3IiBzdHJva2Utd2lkdGg9IjEuMiIgb3BhY2l0eT0iMC4xNSIvPgo8bGluZSB4MT0iNDgiIHkxPSIxNiIgeDI9IjQ4IiB5Mj0iMjAiIHN0cm9rZT0iI2M5YTIyNyIgc3Ryb2tlLXdpZHRoPSIxLjIiIG9wYWNpdHk9IjAuMTUiLz4KPGxpbmUgeDE9IjQwIiB5MT0iMTIiIHgyPSI0NCIgeTI9IjEyIiBzdHJva2U9IiNjOWEyMjciIHN0cm9rZS13aWR0aD0iMS4yIiBvcGFjaXR5PSIwLjE1Ii8+CjxsaW5lIHgxPSI1MiIgeTE9IjEyIiB4Mj0iNTYiIHkyPSIxMiIgc3Ryb2tlPSIjYzlhMjI3IiBzdHJva2Utd2lkdGg9IjEuMiIgb3BhY2l0eT0iMC4xNSIvPgo8L3N2Zz4=');
+  background-size: cover, 90px 90px;
+  background-repeat: no-repeat, repeat;
+}
+
+[data-theme="harrypotter"] .card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #8b1a1a, #c9a227, #8b1a1a);
+  background-size: 220% 100%;
+  animation: theme-shimmer 4s ease-in-out infinite;
+}
+
+[data-theme="harrypotter"] .coach-fab {
+  background: radial-gradient(circle, #f2dfa0, #c9a227 70%);
+  animation: hp-sparkle 2.8s ease-in-out infinite;
+}
+
+@keyframes hp-sparkle {
+  0%,
+  100% {
+    box-shadow: 0 0 6px rgba(201, 162, 39, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(242, 223, 160, 0.75);
+  }
+}
+
+/* Friends — warm coffeehouse tones, coffee-cup motif */
+[data-theme="friends"] {
+  color-scheme: light;
+  --bg: #fdf3e7;
+  --surface: #f7e2c8;
+  --border: #e3c294;
+  --text: #4a2e1a;
+  --text-muted: #9c7a54;
+  --accent: #d9772f;
+  --accent-contrast: #2a1608;
+  --danger: #c0392b;
+  --glass-bg: rgba(247, 226, 200, 0.92);
+}
+
+[data-theme="friends"] .tab-shell,
+[data-theme="friends"] .centered-view {
+  background-color: var(--bg);
+  background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI3MCIgaGVpZ2h0PSI3MCIgdmlld0JveD0iMCAwIDYwIDYwIj4KPHBhdGggZD0iTTE4IDIwaDIwdjIwYTYgNiAwIDAgMS02IDZoLThhNiA2IDAgMCAxLTYtNlYyMFoiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2Q5N2IzZiIgc3Ryb2tlLXdpZHRoPSIxLjgiIG9wYWNpdHk9IjAuMTYiLz4KPHBhdGggZD0iTTM4IDI0aDRhNCA0IDAgMCAxIDAgOGgtNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZDk3YjNmIiBzdHJva2Utd2lkdGg9IjEuOCIgb3BhY2l0eT0iMC4xNiIvPgo8cGF0aCBkPSJNMjIgMTVjMS0yIDMtMiA0IDBNMjggMTVjMS0yIDMtMiA0IDAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2Q5N2IzZiIgc3Ryb2tlLXdpZHRoPSIxLjUiIG9wYWNpdHk9IjAuMTQiLz4KPC9zdmc+');
+  background-size: 90px 90px;
+  background-repeat: repeat;
+}
+
+[data-theme="friends"] .card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #d9772f, #7b4fa0, #d9772f);
+  background-size: 220% 100%;
+  animation: theme-shimmer 4s ease-in-out infinite;
+}
+
+[data-theme="friends"] .coach-fab {
+  background: linear-gradient(135deg, #d9772f, #7b4fa0);
+  background-size: 220% 100%;
+  animation: theme-shimmer 3.5s ease-in-out infinite;
+}
 
 * {
   box-sizing: border-box;
@@ -866,6 +961,7 @@ textarea:focus {
   background: var(--accent);
   color: var(--accent-contrast);
 }
+
 .weight-chart {
   width: 100%;
   height: 120px;
