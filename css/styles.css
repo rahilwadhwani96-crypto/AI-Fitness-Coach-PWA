@@ -212,65 +212,28 @@
   animation: theme-shimmer 3s ease-in-out infinite;
 }
 
-/* Dark Souls — bonfire embers on ash and stone, flickering glow */
+/* Dark Souls — cold stone and ash, knight helmet + sword silhouette, bonfire ember glow */
 [data-theme="darksouls"] {
   color-scheme: dark;
-  --bg: #0d0b08;
-  --surface: #1c170f;
-  --border: #3d3420;
-  --text: #e8dfc8;
-  --text-muted: #8a7d5e;
+  --bg: #0d0e0f;
+  --surface: #1c1f21;
+  --border: #3a3f42;
+  --text: #d8dcd8;
+  --text-muted: #7a8082;
   --accent: #d4780a;
   --accent-contrast: #170d00;
   --danger: #a11f1f;
-  --glass-bg: rgba(20, 16, 10, 0.9);
+  --glass-bg: rgba(18, 20, 21, 0.9);
 }
 
 [data-theme="darksouls"] .tab-shell,
 [data-theme="darksouls"] .centered-view {
   background-color: var(--bg);
-  background-image: radial-gradient(circle at 50% 25%, rgba(212, 120, 10, 0.1), transparent 60%),
-    url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI3MCIgaGVpZ2h0PSI3MCIgdmlld0JveD0iMCAwIDcwIDcwIj4KPHJlY3QgeD0iMzMiIHk9IjYiIHdpZHRoPSI0IiBoZWlnaHQ9IjM0IiBmaWxsPSIjZDQ3ODBhIiBvcGFjaXR5PSIwLjE2Ii8+CjxyZWN0IHg9IjIyIiB5PSI0MCIgd2lkdGg9IjI2IiBoZWlnaHQ9IjQiIGZpbGw9IiNkNDc4MGEiIG9wYWNpdHk9IjAuMTYiLz4KPHJlY3QgeD0iMzEiIHk9IjQ0IiB3aWR0aD0iOCIgaGVpZ2h0PSIxNiIgZmlsbD0iI2Q0NzgwYSIgb3BhY2l0eT0iMC4xNiIvPgo8Y2lyY2xlIGN4PSIzNSIgY3k9IjYyIiByPSIzIiBmaWxsPSIjZDQ3ODBhIiBvcGFjaXR5PSIwLjE2Ii8+Cjwvc3ZnPg==');
+  background-image: radial-gradient(circle at 50% 25%, rgba(212, 120, 10, 0.08), transparent 60%),
+    url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI5MCIgaGVpZ2h0PSI5MCIgdmlld0JveD0iMCAwIDkwIDkwIj4KPHBhdGggZD0iTTI1IDEwYTEzIDEzIDAgMCAxIDEzIDEzdjlIMTJ2LTlBMTMgMTMgMCAwIDEgMjUgMTBaIiBmaWxsPSJub25lIiBzdHJva2U9IiM5YWEwYTIiIHN0cm9rZS13aWR0aD0iMS42IiBvcGFjaXR5PSIwLjE4Ii8+CjxyZWN0IHg9IjIzIiB5PSIxOSIgd2lkdGg9IjQiIGhlaWdodD0iOSIgZmlsbD0iIzlhYTBhMiIgb3BhY2l0eT0iMC4xNiIvPgo8cmVjdCB4PSIxNyIgeT0iMjMiIHdpZHRoPSIxNiIgaGVpZ2h0PSIzIiBmaWxsPSIjOWFhMGEyIiBvcGFjaXR5PSIwLjE2Ii8+CjxyZWN0IHg9IjYzIiB5PSI0NSIgd2lkdGg9IjQiIGhlaWdodD0iMjYiIGZpbGw9IiM5YWEwYTIiIG9wYWNpdHk9IjAuMTgiLz4KPHJlY3QgeD0iNTQiIHk9IjY5IiB3aWR0aD0iMjIiIGhlaWdodD0iNCIgZmlsbD0iIzlhYTBhMiIgb3BhY2l0eT0iMC4xOCIvPgo8cmVjdCB4PSI2MSIgeT0iNzMiIHdpZHRoPSI4IiBoZWlnaHQ9IjEyIiBmaWxsPSIjOWFhMGEyIiBvcGFjaXR5PSIwLjE4Ii8+Cjwvc3ZnPg==');
   background-size: cover, 90px 90px;
   background-repeat: no-repeat, repeat;
 }
-
-[data-theme="darksouls"] .card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background: linear-gradient(90deg, #d4780a, #f5c542, #d4780a);
-  background-size: 220% 100%;
-  animation: theme-shimmer 4s ease-in-out infinite;
-}
-
-[data-theme="darksouls"] .coach-fab {
-  background: radial-gradient(circle, #f5c542, #d4780a 70%);
-  animation: ember-flicker 2.6s ease-in-out infinite;
-}
-
-@keyframes ember-flicker {
-  0%,
-  100% {
-    box-shadow: 0 0 8px rgba(212, 120, 10, 0.4);
-  }
-  20% {
-    box-shadow: 0 0 14px rgba(245, 197, 66, 0.55);
-  }
-  45% {
-    box-shadow: 0 0 6px rgba(212, 120, 10, 0.3);
-  }
-  70% {
-    box-shadow: 0 0 18px rgba(245, 197, 66, 0.65);
-  }
-  85% {
-    box-shadow: 0 0 10px rgba(212, 120, 10, 0.4);
-  }
-}
-
 /* UFC — black/red, octagon-outline pattern, sharp fight-night pulse */
 [data-theme="ufc"] {
   color-scheme: dark;
