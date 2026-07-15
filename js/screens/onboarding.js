@@ -48,7 +48,7 @@ export function renderOnboarding(root, { onComplete }) {
 
     const form = root.querySelector('#profile-form');
 
-    root.querySelectorAll('.goal-chip').forEach((chip) => {
+    root.querySelectorAll('#goal-grid .goal-chip').forEach((chip) => {
       chip.addEventListener('click', () => {
         const name = chip.dataset.name;
         if (state.selectedGoals.has(name)) {
