@@ -72,11 +72,35 @@ function render(container, state) {
     </section>
     <section class="card">
       <h2>This week</h2>
+      <p class="hint">
+        Tap a day to mark it as rest — up to ${d.restCapPerWeek} per week based on your ${d.targetDays} workout
+        days. Days beyond that count as missed.
+      </p>
       <div class="week-calendar">
         ${d.days.map((day, i) => dayChip(day, DAY_LABELS[i], day.date === today)).join('')}
       </div>
+      <p class="form-error" id="weekly-rest-error" hidden></p>
     </section>
   `;
+
+  container.querySelectorAll('.week-day[data-clickable="true"]').forEach((dayEl) => {
+    dayEl.addEventListener('click', () => handleToggleRestDay(container, dayEl.dataset.date));
+  });
+}
+
+async function handleToggleRestDay(container, date) {
+  const errorEl = container.querySelector('#weekly-rest-error');
+  if (errorEl) errorEl.hidden = true;
+
+  try {
+    await callApi('toggleRestDate', { date });
+    await load(container);
+  } catch (err) {
+    if (errorEl) {
+      errorEl.textContent = err instanceof ApiError ? err.message : 'Could not update that day.';
+      errorEl.hidden = false;
+    }
+  }
 }
 
 function dayChip(day, label, isToday) {
@@ -87,10 +111,18 @@ function dayChip(day, label, isToday) {
         ? 'week-day--progress'
         : day.status === 'planned'
           ? 'week-day--planned'
-          : '';
+          : day.status === 'rest'
+            ? 'week-day--rest'
+            : '';
   const todayClass = isToday ? 'week-day--today' : '';
+  // Only days with no workout yet (or already marked rest) can be toggled —
+  // a day that already has a planned/in-progress/completed workout can't be
+  // retroactively turned into a rest day.
+  const clickable = day.status === 'none' || day.status === 'rest';
+  const clickableClass = clickable ? 'week-day--clickable' : '';
+
   return `
-    <div class="week-day ${statusClass} ${todayClass}">
+    <div class="week-day ${statusClass} ${todayClass} ${clickableClass}" data-date="${day.date}" data-clickable="${clickable}">
       <span class="week-day-label">${label}</span>
       <span class="week-day-dot"></span>
     </div>
