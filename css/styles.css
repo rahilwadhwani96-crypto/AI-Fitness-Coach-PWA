@@ -211,6 +211,151 @@
   animation: theme-shimmer 3s ease-in-out infinite;
 }
 
+/* Dark Souls — bonfire embers on ash and stone, flickering glow */
+[data-theme="darksouls"] {
+  color-scheme: dark;
+  --bg: #0d0b08;
+  --surface: #1c170f;
+  --border: #3d3420;
+  --text: #e8dfc8;
+  --text-muted: #8a7d5e;
+  --accent: #d4780a;
+  --accent-contrast: #170d00;
+  --danger: #a11f1f;
+  --glass-bg: rgba(20, 16, 10, 0.9);
+}
+
+[data-theme="darksouls"] body {
+  background-image: radial-gradient(circle at 50% 25%, rgba(212, 120, 10, 0.08), transparent 60%),
+    repeating-linear-gradient(180deg, rgba(0, 0, 0, 0.15) 0px, rgba(0, 0, 0, 0.15) 2px, transparent 2px, transparent 4px);
+}
+
+[data-theme="darksouls"] .card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #d4780a, #f5c542, #d4780a);
+  background-size: 220% 100%;
+  animation: theme-shimmer 4s ease-in-out infinite;
+}
+
+[data-theme="darksouls"] .coach-fab {
+  background: radial-gradient(circle, #f5c542, #d4780a 70%);
+  animation: ember-flicker 2.6s ease-in-out infinite;
+}
+
+@keyframes ember-flicker {
+  0%,
+  100% {
+    box-shadow: 0 0 8px rgba(212, 120, 10, 0.4);
+  }
+  20% {
+    box-shadow: 0 0 14px rgba(245, 197, 66, 0.55);
+  }
+  45% {
+    box-shadow: 0 0 6px rgba(212, 120, 10, 0.3);
+  }
+  70% {
+    box-shadow: 0 0 18px rgba(245, 197, 66, 0.65);
+  }
+  85% {
+    box-shadow: 0 0 10px rgba(212, 120, 10, 0.4);
+  }
+}
+
+/* UFC — black/red, cage-fence texture, sharp fight-night pulse */
+[data-theme="ufc"] {
+  color-scheme: dark;
+  --bg: #0c0c0d;
+  --surface: #1a1a1a;
+  --border: #3a1414;
+  --text: #ffffff;
+  --text-muted: #9a9a9a;
+  --accent: #d20a0a;
+  --accent-contrast: #ffffff;
+  --danger: #d20a0a;
+  --glass-bg: rgba(10, 10, 10, 0.9);
+}
+
+[data-theme="ufc"] body {
+  background-image: repeating-linear-gradient(
+      45deg,
+      rgba(210, 10, 10, 0.04) 0px,
+      rgba(210, 10, 10, 0.04) 1px,
+      transparent 1px,
+      transparent 26px
+    ),
+    repeating-linear-gradient(-45deg, rgba(210, 10, 10, 0.04) 0px, rgba(210, 10, 10, 0.04) 1px, transparent 1px, transparent 26px);
+}
+
+[data-theme="ufc"] .card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #d20a0a, #ffffff, #d20a0a);
+  background-size: 220% 100%;
+  animation: theme-shimmer 2s linear infinite;
+}
+
+[data-theme="ufc"] .coach-fab {
+  background: linear-gradient(135deg, #d20a0a, #7a0505);
+  animation: ufc-pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes ufc-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 6px rgba(210, 10, 10, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 22px rgba(210, 10, 10, 0.85);
+  }
+}
+
+/* Undisputed Era — sleek black/gold, premium slow shimmer */
+[data-theme="undisputed"] {
+  color-scheme: dark;
+  --bg: #0a0a0c;
+  --surface: #16161a;
+  --border: #3a3320;
+  --text: #ffffff;
+  --text-muted: #a39c8a;
+  --accent: #c9a227;
+  --accent-contrast: #1a1408;
+  --danger: #e5342b;
+  --glass-bg: rgba(20, 20, 22, 0.9);
+}
+
+[data-theme="undisputed"] body {
+  background-image: linear-gradient(120deg, transparent 40%, rgba(201, 162, 39, 0.06) 50%, transparent 60%);
+}
+
+[data-theme="undisputed"] .card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #c9a227, #f2dfa0, #c9a227);
+  background-size: 220% 100%;
+  animation: theme-shimmer 4.5s ease-in-out infinite;
+}
+
+[data-theme="undisputed"] .coach-fab {
+  background: linear-gradient(135deg, #c9a227, #f2dfa0, #c9a227);
+  background-size: 220% 100%;
+  animation: theme-shimmer 4.5s ease-in-out infinite;
+}
+
+* {
+
 * {
   box-sizing: border-box;
 }
