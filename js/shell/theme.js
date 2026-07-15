@@ -7,6 +7,9 @@ export const THEME_LIST = [
   { id: 'lava', label: 'Lava', swatch: '#ff5722' },
   { id: 'kobrakai', label: 'Kobra Kai', swatch: '#e0201e' },
   { id: 'naruto', label: 'Naruto', swatch: '#ff7a1a' },
+  { id: 'darksouls', label: 'Dark Souls', swatch: '#d4780a' },
+  { id: 'ufc', label: 'UFC', swatch: '#d20a0a' },
+  { id: 'undisputed', label: 'Undisputed Era', swatch: '#c9a227' },
 ];
 
 const VALID_THEME_IDS = THEME_LIST.map((t) => t.id);
