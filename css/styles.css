@@ -822,3 +822,440 @@ textarea:focus {
 .theme-sheet-list {
   padding: 6px 0;
 }
+
+.theme-option {
+  width: 100%;
+  margin: 0;
+  padding: 12px 14px;
+  background: none;
+  border: none;
+  border-radius: 0;
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 400;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.theme-option:not(:last-child) {
+  border-bottom: 1px solid var(--border);
+}
+
+.theme-option--active {
+  background: rgba(255, 122, 41, 0.1);
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.theme-swatch-dot {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.15);
+  flex-shrink: 0;
+  display: inline-block;
+}
+
+#food-upload-photo,
+#analyze-another-button {
+  background: var(--surface);
+  color: var(--accent);
+  border: 1px solid var(--accent);
+}
+
+/* ---------- Tab shell ---------- */
+
+.tab-shell {
+  position: relative;
+  height: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+  overflow: hidden;
+  background: var(--bg);
+}
+
+.tab-panels {
+  display: flex;
+  height: 100%;
+  width: 500%;
+}
+
+.tab-panel {
+  width: 20%;
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.pull-indicator {
+  height: 0px;
+  flex-shrink: 0;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: var(--text-muted);
+  font-size: 13px;
+  transition: height 0.15s ease;
+}
+
+.pull-indicator--ready {
+  color: var(--accent);
+}
+
+.pull-indicator::before {
+  content: "";
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2px solid currentColor;
+  border-top-color: transparent;
+  opacity: 0.6;
+  transition: transform 0.2s ease;
+}
+
+.pull-indicator--ready::before {
+  transform: rotate(180deg);
+  opacity: 1;
+}
+
+.pull-indicator--loading::before {
+  animation: spin 0.7s linear infinite;
+  opacity: 1;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.pull-indicator::after {
+  content: "Pull to refresh";
+}
+
+.pull-indicator--ready::after {
+  content: "Release to refresh";
+}
+
+.pull-indicator--loading::after {
+  content: "Refreshing…";
+}
+
+.pull-indicator--done {
+  color: var(--accent);
+  height: 32px !important;
+}
+
+.pull-indicator--done::before {
+  content: "\2713";
+  width: auto;
+  height: auto;
+  border: none;
+  font-size: 15px;
+  font-weight: 700;
+  opacity: 1;
+  animation: none;
+  transform: none;
+}
+
+.pull-indicator--done::after {
+  content: "Updated";
+}
+
+.tab-panel-scroll {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: max(28px, calc(env(safe-area-inset-top, 20px) + 8px)) 20px calc(96px + env(safe-area-inset-bottom, 12px));
+}
+
+.tab-bar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px) saturate(1.5);
+  -webkit-backdrop-filter: blur(20px) saturate(1.5);
+  border-top: 1px solid var(--border);
+  border-radius: 22px 22px 0 0;
+  padding: 10px 6px calc(10px + env(safe-area-inset-bottom, 12px));
+  box-shadow: 0 -6px 24px rgba(0, 0, 0, 0.35);
+  z-index: 5;
+}
+
+.tab-bar-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  padding: 4px 0;
+  margin: 0;
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1), color 0.2s ease;
+}
+
+.tab-bar-item:active {
+  transform: scale(0.88);
+}
+
+.tab-bar-icon svg {
+  width: 22px;
+  height: 22px;
+  display: block;
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.tab-bar-item--active {
+  color: var(--accent);
+}
+
+.tab-bar-item--active .tab-bar-icon svg {
+  transform: scale(1.12);
+}
+
+.coach-fab {
+  position: absolute;
+  right: 16px;
+  bottom: calc(72px + env(safe-area-inset-bottom, 12px));
+  width: 52px;
+  height: 52px;
+  padding: 0;
+  margin: 0;
+  border-radius: 50%;
+  background: var(--accent);
+  border: none;
+  color: var(--accent-contrast);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);
+  z-index: 6;
+  cursor: pointer;
+  transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
+  animation: fab-in 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* No tab bar to clear on session/onboarding-style screens — sit near the true bottom instead. */
+.coach-fab--compact {
+  bottom: max(16px, env(safe-area-inset-bottom));
+}
+
+.coach-fab:active {
+  transform: scale(0.9);
+}
+
+@keyframes fab-in {
+  from {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.coach-fab svg {
+  width: 26px;
+  height: 26px;
+}
+
+.coach-panel {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  max-height: 78%;
+  background: var(--glass-bg);
+  backdrop-filter: blur(24px) saturate(1.5);
+  -webkit-backdrop-filter: blur(24px) saturate(1.5);
+  border-top: 1px solid var(--border);
+  border-radius: 20px 20px 0 0;
+  z-index: 7;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: env(safe-area-inset-bottom);
+  animation: panel-in 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes panel-in {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.coach-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  font-size: 15px;
+  font-weight: 600;
+  border-bottom: 1px solid var(--border);
+}
+
+.coach-panel-close {
+  width: auto;
+  margin: 0;
+  padding: 4px 8px;
+  background: none;
+  color: var(--text-muted);
+  font-size: 18px;
+  line-height: 1;
+}
+
+.coach-panel-body {
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.coach-messages {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.coach-message {
+  max-width: 80%;
+  padding: 10px 14px;
+  border-radius: 16px;
+  font-size: 14px;
+  line-height: 1.4;
+  white-space: pre-wrap;
+}
+
+.coach-message--coach {
+  align-self: flex-start;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-bottom-left-radius: 4px;
+}
+
+.coach-message--user {
+  align-self: flex-end;
+  background: var(--accent);
+  color: var(--accent-contrast);
+  border-bottom-right-radius: 4px;
+}
+
+.coach-message--error {
+  color: var(--danger);
+}
+
+.coach-retry-button {
+  width: auto;
+  margin: 8px 0 0;
+  padding: 6px 14px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 999px;
+  background: rgba(229, 52, 43, 0.15);
+  color: var(--danger);
+  border: 1px solid var(--danger);
+}
+
+.coach-message-image {
+  width: 100%;
+  max-width: 200px;
+  border-radius: 12px;
+  display: block;
+  margin-bottom: 6px;
+}
+
+.coach-attach-button {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  margin: 0;
+  border-radius: 50%;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.coach-attach-button svg {
+  width: 18px;
+  height: 18px;
+}
+
+.coach-pending-image {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 20px;
+  border-top: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.coach-pending-image img {
+  width: 44px;
+  height: 44px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.coach-pending-image button {
+  width: auto;
+  margin: 0;
+  padding: 4px 10px;
+  background: var(--surface);
+  color: var(--danger);
+  border: 1px solid var(--danger);
+  font-size: 12px;
+}
+
+.coach-input-row {
+  display: flex;
+  gap: 8px;
+  padding: 12px 20px calc(12px + env(safe-area-inset-bottom));
+  border-top: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.coach-input-row input {
+  flex: 1;
+  padding: 10px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text);
+  font-size: 14px;
+  font-family: inherit;
+}
+
+.coach-input-row input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.coach-input-row button {
+  width: auto;
+  margin: 0;
+  padding: 0 20px;
+  border-radius: 999px;
+}
