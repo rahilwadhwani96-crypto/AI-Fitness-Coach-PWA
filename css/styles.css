@@ -411,24 +411,24 @@
   }
 }
 
-/* Friends — warm coffeehouse tones, coffee-cup motif */
+/* Friends — purple-forward, picture-frame + coffee-cup motif */
 [data-theme="friends"] {
-  color-scheme: light;
-  --bg: #fdf3e7;
-  --surface: #f7e2c8;
-  --border: #e3c294;
-  --text: #4a2e1a;
-  --text-muted: #9c7a54;
-  --accent: #d9772f;
-  --accent-contrast: #2a1608;
+  color-scheme: dark;
+  --bg: #120a1a;
+  --surface: #1e1030;
+  --border: #3a2152;
+  --text: #f0e6f5;
+  --text-muted: #a893b8;
+  --accent: #7b4fa0;
+  --accent-contrast: #f5eefa;
   --danger: #c0392b;
-  --glass-bg: rgba(247, 226, 200, 0.92);
+  --glass-bg: rgba(24, 16, 34, 0.9);
 }
 
 [data-theme="friends"] .tab-shell,
 [data-theme="friends"] .centered-view {
   background-color: var(--bg);
-  background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI3MCIgaGVpZ2h0PSI3MCIgdmlld0JveD0iMCAwIDYwIDYwIj4KPHBhdGggZD0iTTE4IDIwaDIwdjIwYTYgNiAwIDAgMS02IDZoLThhNiA2IDAgMCAxLTYtNlYyMFoiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2Q5N2IzZiIgc3Ryb2tlLXdpZHRoPSIxLjgiIG9wYWNpdHk9IjAuMTYiLz4KPHBhdGggZD0iTTM4IDI0aDRhNCA0IDAgMCAxIDAgOGgtNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZDk3YjNmIiBzdHJva2Utd2lkdGg9IjEuOCIgb3BhY2l0eT0iMC4xNiIvPgo8cGF0aCBkPSJNMjIgMTVjMS0yIDMtMiA0IDBNMjggMTVjMS0yIDMtMiA0IDAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2Q5N2IzZiIgc3Ryb2tlLXdpZHRoPSIxLjUiIG9wYWNpdHk9IjAuMTQiLz4KPC9zdmc+');
+  background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI5MCIgaGVpZ2h0PSI5MCIgdmlld0JveD0iMCAwIDkwIDkwIj4KPHJlY3QgeD0iMTAiIHk9IjEwIiB3aWR0aD0iMjQiIGhlaWdodD0iMzAiIHJ4PSIyIiBmaWxsPSJub25lIiBzdHJva2U9IiM3YjRmYTAiIHN0cm9rZS13aWR0aD0iMiIgb3BhY2l0eT0iMC4xOCIvPgo8Y2lyY2xlIGN4PSIyMiIgY3k9IjI1IiByPSI2IiBmaWxsPSJub25lIiBzdHJva2U9IiM3YjRmYTAiIHN0cm9rZS13aWR0aD0iMS41IiBvcGFjaXR5PSIwLjE0Ii8+CjxwYXRoIGQ9Ik01NSA0NWgyMHYyMGE2IDYgMCAwIDEtNiA2aC04YTYgNiAwIDAgMS02LTZWNDVaIiBmaWxsPSJub25lIiBzdHJva2U9IiNkOTc3MmYiIHN0cm9rZS13aWR0aD0iMS44IiBvcGFjaXR5PSIwLjE1Ii8+CjxwYXRoIGQ9Ik03NSA0OWg0YTQgNCAwIDAgMSAwIDhoLTQiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2Q5NzcyZiIgc3Ryb2tlLXdpZHRoPSIxLjgiIG9wYWNpdHk9IjAuMTUiLz4KPC9zdmc+');
   background-size: 90px 90px;
   background-repeat: repeat;
 }
@@ -440,13 +440,13 @@
   left: 0;
   right: 0;
   height: 3px;
-  background: linear-gradient(90deg, #d9772f, #7b4fa0, #d9772f);
+  background: linear-gradient(90deg, #7b4fa0, #d9772f, #7b4fa0);
   background-size: 220% 100%;
   animation: theme-shimmer 4s ease-in-out infinite;
 }
 
 [data-theme="friends"] .coach-fab {
-  background: linear-gradient(135deg, #d9772f, #7b4fa0);
+  background: linear-gradient(135deg, #7b4fa0, #d9772f);
   background-size: 220% 100%;
   animation: theme-shimmer 3.5s ease-in-out infinite;
 }
