@@ -10,6 +10,8 @@ export const THEME_LIST = [
   { id: 'darksouls', label: 'Dark Souls', swatch: '#d4780a' },
   { id: 'ufc', label: 'UFC', swatch: '#d20a0a' },
   { id: 'undisputed', label: 'Undisputed Era', swatch: '#c9a227' },
+  { id: 'harrypotter', label: 'Harry Potter', swatch: '#c9a227' },
+  { id: 'friends', label: 'Friends', swatch: '#d9772f' },
 ];
 
 const VALID_THEME_IDS = THEME_LIST.map((t) => t.id);
