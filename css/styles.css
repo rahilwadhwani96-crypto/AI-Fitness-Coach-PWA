@@ -361,25 +361,25 @@
   animation: theme-shimmer 4.5s ease-in-out infinite;
 }
 
-/* Harry Potter — parchment & deep maroon, generic wand + sparkle motif */
+/* Harry Potter — moonlit night, dark-creature vibe, Gryffindor red-gold flicker */
 [data-theme="harrypotter"] {
   color-scheme: dark;
-  --bg: #140d08;
-  --surface: #241811;
-  --border: #4a3018;
-  --text: #f0e6d2;
-  --text-muted: #b0a084;
+  --bg: #0a0e12;
+  --surface: #141b22;
+  --border: #2a3d45;
+  --text: #e8f0ee;
+  --text-muted: #7d9098;
   --accent: #c9a227;
   --accent-contrast: #1a1408;
   --danger: #8b1a1a;
-  --glass-bg: rgba(20, 13, 8, 0.9);
+  --glass-bg: rgba(10, 14, 18, 0.9);
 }
 
 [data-theme="harrypotter"] .tab-shell,
 [data-theme="harrypotter"] .centered-view {
   background-color: var(--bg);
-  background-image: radial-gradient(circle at 50% 20%, rgba(139, 26, 26, 0.12), transparent 55%),
-    url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI3MCIgaGVpZ2h0PSI3MCIgdmlld0JveD0iMCAwIDYwIDYwIj4KPGxpbmUgeDE9IjEwIiB5MT0iNTIiIHgyPSI0NiIgeTI9IjE0IiBzdHJva2U9IiNjOWEyMjciIHN0cm9rZS13aWR0aD0iMiIgb3BhY2l0eT0iMC4xNSIvPgo8Y2lyY2xlIGN4PSI0OCIgY3k9IjEyIiByPSIyLjUiIGZpbGw9IiNjOWEyMjciIG9wYWNpdHk9IjAuMTgiLz4KPGxpbmUgeDE9IjQ4IiB5MT0iNCIgeDI9IjQ4IiB5Mj0iOCIgc3Ryb2tlPSIjYzlhMjI3IiBzdHJva2Utd2lkdGg9IjEuMiIgb3BhY2l0eT0iMC4xNSIvPgo8bGluZSB4MT0iNDgiIHkxPSIxNiIgeDI9IjQ4IiB5Mj0iMjAiIHN0cm9rZT0iI2M5YTIyNyIgc3Ryb2tlLXdpZHRoPSIxLjIiIG9wYWNpdHk9IjAuMTUiLz4KPGxpbmUgeDE9IjQwIiB5MT0iMTIiIHgyPSI0NCIgeTI9IjEyIiBzdHJva2U9IiNjOWEyMjciIHN0cm9rZS13aWR0aD0iMS4yIiBvcGFjaXR5PSIwLjE1Ii8+CjxsaW5lIHgxPSI1MiIgeTE9IjEyIiB4Mj0iNTYiIHkyPSIxMiIgc3Ryb2tlPSIjYzlhMjI3IiBzdHJva2Utd2lkdGg9IjEuMiIgb3BhY2l0eT0iMC4xNSIvPgo8L3N2Zz4=');
+  background-image: radial-gradient(circle at 50% 15%, rgba(139, 26, 26, 0.1), transparent 55%),
+    url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI5MCIgaGVpZ2h0PSI5MCIgdmlld0JveD0iMCAwIDkwIDkwIj4KPHBhdGggZD0iTTYyIDEyYTE0IDE0IDAgMSAwIDEwIDI2IDExIDExIDAgMCAxLTEwLTI2WiIgZmlsbD0iI2M5YTIyNyIgb3BhY2l0eT0iMC4yIi8+CjxwYXRoIGQ9Ik0yMCA1NWMtNC0zLTktMy0xMiAwIDMgMSA1IDMgNiA2IDEtMyAzLTUgNi02LTEtMyAxLTYgMy04LTEgMyAwIDYtMyA4Wm0xMCAwYzQtMyA5LTMgMTIgMC0zIDEtNSAzLTYgNi0xLTMtMy01LTYtNiAxLTMtMS02LTMtOCAxIDMgMCA2IDMgOFoiIGZpbGw9IiM4YjFhMWEiIG9wYWNpdHk9IjAuMTgiLz4KPGNpcmNsZSBjeD0iMzAiIGN5PSIxNSIgcj0iMS4yIiBmaWxsPSIjYzlhMjI3IiBvcGFjaXR5PSIwLjIyIi8+CjxjaXJjbGUgY3g9IjQ1IiBjeT0iMzAiIHI9IjEiIGZpbGw9IiNjOWEyMjciIG9wYWNpdHk9IjAuMiIvPgo8Y2lyY2xlIGN4PSIxNSIgY3k9IjM1IiByPSIxIiBmaWxsPSIjYzlhMjI3IiBvcGFjaXR5PSIwLjE4Ii8+Cjwvc3ZnPg==');
   background-size: cover, 90px 90px;
   background-repeat: no-repeat, repeat;
 }
@@ -397,20 +397,19 @@
 }
 
 [data-theme="harrypotter"] .coach-fab {
-  background: radial-gradient(circle, #f2dfa0, #c9a227 70%);
+  background: radial-gradient(circle, #f5c542, #8b1a1a 75%);
   animation: hp-sparkle 2.8s ease-in-out infinite;
 }
 
 @keyframes hp-sparkle {
   0%,
   100% {
-    box-shadow: 0 0 6px rgba(201, 162, 39, 0.4);
+    box-shadow: 0 0 6px rgba(139, 26, 26, 0.45);
   }
   50% {
-    box-shadow: 0 0 20px rgba(242, 223, 160, 0.75);
+    box-shadow: 0 0 20px rgba(245, 197, 66, 0.75);
   }
 }
-
 /* Friends — purple-forward, picture-frame + coffee-cup motif */
 [data-theme="friends"] {
   color-scheme: dark;
