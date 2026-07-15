@@ -3,29 +3,29 @@ import { callApi, ApiError } from '../api/client.js';
 
 const DAY_LABELS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
-export function renderWeekly(container) {
-  render(container, { loading: true });
-  load(container);
+export function renderWeekly(container, context) {
+  render(container, context, { loading: true });
+  load(container, context);
 }
 
 /** Used by pull-to-refresh. */
-export function refreshWeekly(container) {
-  return load(container);
+export function refreshWeekly(container, context) {
+  return load(container, context);
 }
 
-async function load(container) {
+async function load(container, context) {
   try {
     const data = await callApi('getWeeklyStats');
-    render(container, { loading: false, data });
+    render(container, context, { loading: false, data });
   } catch (err) {
-    render(container, {
+    render(container, context, {
       loading: false,
       error: err instanceof ApiError ? err.message : 'Could not load weekly stats.',
     });
   }
 }
 
-function render(container, state) {
+function render(container, context, state) {
   if (state.loading) {
     container.innerHTML = `
       <h1 class="screen-title">Weekly</h1>
@@ -44,7 +44,7 @@ function render(container, state) {
         <button type="button" id="weekly-retry">Retry</button>
       </section>
     `;
-    container.querySelector('#weekly-retry').addEventListener('click', () => load(container));
+    container.querySelector('#weekly-retry').addEventListener('click', () => load(container, context));
     return;
   }
 
@@ -84,23 +84,76 @@ function render(container, state) {
   `;
 
   container.querySelectorAll('.week-day[data-clickable="true"]').forEach((dayEl) => {
-    dayEl.addEventListener('click', () => handleToggleRestDay(container, dayEl.dataset.date));
+    dayEl.addEventListener('click', () => {
+      const date = dayEl.dataset.date;
+      const isCurrentlyRest = dayEl.classList.contains('week-day--rest');
+      const dateLabel = formatDayLabel(date);
+      const promptText = isCurrentlyRest
+        ? `Remove rest day from ${dateLabel}?`
+        : `Mark ${dateLabel} as a rest day? No workout will be generated for it.`;
+
+      showConfirmSheet(promptText, () => handleToggleRestDay(container, context, date));
+    });
   });
 }
 
-async function handleToggleRestDay(container, date) {
+async function handleToggleRestDay(container, context, date) {
   const errorEl = container.querySelector('#weekly-rest-error');
   if (errorEl) errorEl.hidden = true;
 
   try {
     await callApi('toggleRestDate', { date });
-    await load(container);
+    await load(container, context);
+
+    // If today specifically changed, Home needs to know — it was already
+    // rendered before this happened and won't pick it up on its own.
+    if (date === todayDateString() && context && typeof context.refreshTab === 'function') {
+      context.refreshTab('home');
+    }
   } catch (err) {
     if (errorEl) {
       errorEl.textContent = err instanceof ApiError ? err.message : 'Could not update that day.';
       errorEl.hidden = false;
     }
   }
+}
+
+/**
+ * Rendered attached to document.body — NOT nested inside the tab
+ * shell's swipeable panel, which uses a CSS transform for the swipe
+ * animation. A transformed ancestor creates a new containing block,
+ * which silently breaks fixed-position children (same issue solved for
+ * the theme picker). Attaching to body sidesteps that entirely.
+ */
+function showConfirmSheet(message, onConfirm) {
+  const overlay = document.createElement('div');
+  overlay.className = 'confirm-sheet-overlay';
+
+  const sheet = document.createElement('div');
+  sheet.className = 'confirm-sheet';
+  sheet.innerHTML = `
+    <p class="confirm-sheet-title">${escapeHtml(message)}</p>
+    <div class="confirm-sheet-actions">
+      <button type="button" class="confirm-sheet-cancel">Cancel</button>
+      <button type="button" class="confirm-sheet-confirm">Confirm</button>
+    </div>
+  `;
+
+  overlay.appendChild(sheet);
+  document.body.appendChild(overlay);
+
+  function close() {
+    overlay.remove();
+  }
+
+  overlay.addEventListener('click', (event) => {
+    if (event.target === overlay) close();
+  });
+  sheet.querySelector('.confirm-sheet-cancel').addEventListener('click', close);
+  sheet.querySelector('.confirm-sheet-confirm').addEventListener('click', () => {
+    close();
+    onConfirm();
+  });
 }
 
 function dayChip(day, label, isToday) {
@@ -134,6 +187,11 @@ function formatRange(startStr, endStr) {
   const end = new Date(endStr + 'T00:00:00');
   const opts = { month: 'short', day: 'numeric' };
   return `${start.toLocaleDateString(undefined, opts)} – ${end.toLocaleDateString(undefined, opts)}`;
+}
+
+function formatDayLabel(dateStr) {
+  const date = new Date(dateStr + 'T00:00:00');
+  return date.toLocaleDateString(undefined, { weekday: 'long', month: 'short', day: 'numeric' });
 }
 
 function todayDateString() {
