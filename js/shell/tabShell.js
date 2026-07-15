@@ -56,6 +56,20 @@ export function renderTabShell(root, context) {
   const panels = [...root.querySelectorAll('.tab-panel')];
   const scrollAreas = [...root.querySelectorAll('[data-scroll]')];
 
+  // Every tab is rendered up front and stays in the DOM for the swipe
+  // animation — switching tabs never re-fetches. That means if one tab
+  // changes data another tab depends on (e.g. Weekly marking today as a
+  // rest day, which Home needs to reflect), the affected tab needs to be
+  // told to refresh explicitly rather than relying on a natural re-mount.
+  context.refreshTab = function (tabId) {
+    const index = TABS.findIndex((t) => t.id === tabId);
+    if (index === -1) return;
+    const tab = TABS[index];
+    if (typeof tab.refresh === 'function') {
+      tab.refresh(scrollAreas[index], context);
+    }
+  };
+
   // Render every screen's content up front. They're all in the DOM at
   // once (side by side) so swiping between them is instant with no
   // re-render — only the transform on #tab-panels moves.
