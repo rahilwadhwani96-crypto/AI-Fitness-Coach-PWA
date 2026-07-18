@@ -413,8 +413,148 @@
   animation: theme-shimmer 3.5s ease-in-out infinite;
 }
 
-* {
-  box-sizing: border-box;
+/* India — saffron/white/green, Ashoka Chakra-style wheel motif */
+[data-theme="india"] {
+  color-scheme: dark;
+  --bg: #0d0f0a;
+  --surface: #171a10;
+  --border: #35401f;
+  --text: #f5f5f0;
+  --text-muted: #9a9a88;
+  --accent: #ff9933;
+  --accent-contrast: #1a0d00;
+  --danger: #e5342b;
+  --glass-bg: rgba(20, 22, 15, 0.9);
+}
+
+[data-theme="india"] .tab-shell,
+[data-theme="india"] .centered-view {
+  background-color: var(--bg);
+  background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI5MCIgaGVpZ2h0PSI5MCIgdmlld0JveD0iMCAwIDkwIDkwIj4KPGNpcmNsZSBjeD0iNDUiIGN5PSI0NSIgcj0iMTYiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzFhM2E4ZiIgc3Ryb2tlLXdpZHRoPSIxLjYiIG9wYWNpdHk9IjAuMTgiLz4KPGNpcmNsZSBjeD0iNDUiIGN5PSI0NSIgcj0iMiIgZmlsbD0iIzFhM2E4ZiIgb3BhY2l0eT0iMC4yIi8+CjxsaW5lIHgxPSI0NSIgeTE9IjI5IiB4Mj0iNDUiIHkyPSI2MSIgc3Ryb2tlPSIjMWEzYThmIiBzdHJva2Utd2lkdGg9IjEiIG9wYWNpdHk9IjAuMTYiLz4KPGxpbmUgeDE9IjI5IiB5MT0iNDUiIHgyPSI2MSIgeTI9IjQ1IiBzdHJva2U9IiMxYTNhOGYiIHN0cm9rZS13aWR0aD0iMSIgb3BhY2l0eT0iMC4xNiIvPgo8bGluZSB4MT0iMzQiIHkxPSIzNCIgeDI9IjU2IiB5Mj0iNTYiIHN0cm9rZT0iIzFhM2E4ZiIgc3Ryb2tlLXdpZHRoPSIxIiBvcGFjaXR5PSIwLjE2Ii8+CjxsaW5lIHgxPSI1NiIgeTE9IjM0IiB4Mj0iMzQiIHkyPSI1NiIgc3Ryb2tlPSIjMWEzYThmIiBzdHJva2Utd2lkdGg9IjEiIG9wYWNpdHk9IjAuMTYiLz4KPHJlY3QgeD0iMTAiIHk9IjcyIiB3aWR0aD0iMTQiIGhlaWdodD0iMyIgZmlsbD0iI2ZmOTkzMyIgb3BhY2l0eT0iMC4xOCIvPgo8cmVjdCB4PSIxMCIgeT0iNzYiIHdpZHRoPSIxNCIgaGVpZ2h0PSIzIiBmaWxsPSIjMTM4ODA4IiBvcGFjaXR5PSIwLjE4Ii8+Cjwvc3ZnPg==');
+  background-size: 90px 90px;
+  background-repeat: repeat;
+}
+
+[data-theme="india"] .card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #ff9933, #ffffff, #138808);
+  background-size: 220% 100%;
+  animation: theme-shimmer 4s ease-in-out infinite;
+}
+
+[data-theme="india"] .coach-fab {
+  background: linear-gradient(180deg, #ff9933, #ffffff, #138808);
+  background-size: 100% 220%;
+  animation: india-flow 4s ease-in-out infinite;
+}
+
+@keyframes india-flow {
+  0% {
+    background-position: 0% 0%;
+  }
+  50% {
+    background-position: 0% 100%;
+  }
+  100% {
+    background-position: 0% 0%;
+  }
+}
+
+/* USA — red/white/blue, star motif */
+[data-theme="us"] {
+  color-scheme: dark;
+  --bg: #0a0e1a;
+  --surface: #141b2e;
+  --border: #2a3550;
+  --text: #f5f5f5;
+  --text-muted: #8a95ab;
+  --accent: #b22234;
+  --accent-contrast: #ffffff;
+  --danger: #b22234;
+  --glass-bg: rgba(15, 20, 35, 0.9);
+}
+
+[data-theme="us"] .tab-shell,
+[data-theme="us"] .centered-view {
+  background-color: var(--bg);
+  background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI5MCIgaGVpZ2h0PSI5MCIgdmlld0JveD0iMCAwIDkwIDkwIj4KPHBvbHlnb24gcG9pbnRzPSIyNS4wLDE2LjAgMjcuMSwyMi4xIDMzLjYsMjIuMiAyOC40LDI2LjEgMzAuMywzMi4zIDI1LjAsMjguNiAxOS43LDMyLjMgMjEuNiwyNi4xIDE2LjQsMjIuMiAyMi45LDIyLjEiIGZpbGw9IiNmZmZmZmYiIG9wYWNpdHk9IjAuMTYiLz4KPHBvbHlnb24gcG9pbnRzPSI2NS4wLDUzLjAgNjYuNiw1Ny43IDcxLjcsNTcuOCA2Ny43LDYwLjkgNjkuMSw2NS43IDY1LjAsNjIuOCA2MC45LDY1LjcgNjIuMyw2MC45IDU4LjMsNTcuOCA2My40LDU3LjciIGZpbGw9IiNmZmZmZmYiIG9wYWNpdHk9IjAuMTMiLz4KPHJlY3QgeD0iMCIgeT0iODAiIHdpZHRoPSI5MCIgaGVpZ2h0PSI0IiBmaWxsPSIjYjIyMjM0IiBvcGFjaXR5PSIwLjE0Ii8+Cjwvc3ZnPg==');
+  background-size: 90px 90px;
+  background-repeat: repeat;
+}
+
+[data-theme="us"] .card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #b22234, #ffffff, #3b5fa8, #ffffff, #b22234);
+  background-size: 220% 100%;
+  animation: theme-shimmer 4s ease-in-out infinite;
+}
+
+[data-theme="us"] .coach-fab {
+  background: linear-gradient(135deg, #b22234, #3b5fa8);
+  animation: us-pulse 2.6s ease-in-out infinite;
+}
+
+@keyframes us-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 6px rgba(178, 34, 52, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 18px rgba(59, 95, 168, 0.6);
+  }
+}
+
+/* USA Modified — red/black/blue, star motif */
+[data-theme="usmod"] {
+  color-scheme: dark;
+  --bg: #0a0a0c;
+  --surface: #17171a;
+  --border: #2e2e33;
+  --text: #ffffff;
+  --text-muted: #9a9a9a;
+  --accent: #b22234;
+  --accent-contrast: #ffffff;
+  --danger: #b22234;
+  --glass-bg: rgba(15, 15, 18, 0.9);
+}
+
+[data-theme="usmod"] .tab-shell,
+[data-theme="usmod"] .centered-view {
+  background-color: var(--bg);
+  background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI5MCIgaGVpZ2h0PSI5MCIgdmlld0JveD0iMCAwIDkwIDkwIj4KPHBvbHlnb24gcG9pbnRzPSIyNS4wLDE2LjAgMjcuMSwyMi4xIDMzLjYsMjIuMiAyOC40LDI2LjEgMzAuMywzMi4zIDI1LjAsMjguNiAxOS43LDMyLjMgMjEuNiwyNi4xIDE2LjQsMjIuMiAyMi45LDIyLjEiIGZpbGw9IiMzYjVmYTgiIG9wYWNpdHk9IjAuMiIvPgo8cG9seWdvbiBwb2ludHM9IjY1LjAsNTMuMCA2Ni42LDU3LjcgNzEuNyw1Ny44IDY3LjcsNjAuOSA2OS4xLDY1LjcgNjUuMCw2Mi44IDYwLjksNjUuNyA2Mi4zLDYwLjkgNTguMyw1Ny44IDYzLjQsNTcuNyIgZmlsbD0iI2IyMjIzNCIgb3BhY2l0eT0iMC4xOCIvPgo8cmVjdCB4PSIwIiB5PSI4MCIgd2lkdGg9IjkwIiBoZWlnaHQ9IjQiIGZpbGw9IiNiMjIyMzQiIG9wYWNpdHk9IjAuMTYiLz4KPC9zdmc+');
+  background-size: 90px 90px;
+  background-repeat: repeat;
+}
+
+[data-theme="usmod"] .card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #b22234, #3b5fa8, #b22234);
+  background-size: 220% 100%;
+  animation: theme-shimmer 2.4s linear infinite;
+}
+
+[data-theme="usmod"] .coach-fab {
+  background: linear-gradient(135deg, #b22234, #17171a, #3b5fa8);
+  background-size: 220% 100%;
+  animation: theme-shimmer 2.4s ease-in-out infinite;
+}
+
+* {  box-sizing: border-box;
 }
 
 html,
