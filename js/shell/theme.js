@@ -11,7 +11,10 @@ export const THEME_LIST = [
   { id: 'ufc', label: 'UFC', swatch: '#d20a0a' },
   { id: 'undisputed', label: 'Undisputed Era', swatch: '#c9a227' },
   { id: 'harrypotter', label: 'Harry Potter', swatch: '#c9a227' },
-  { id: 'friends', label: 'Friends', swatch: '#d9772f' },
+  { id: 'friends', label: 'Friends', swatch: '#7b4fa0' },
+  { id: 'india', label: 'India', swatch: '#ff9933' },
+  { id: 'us', label: 'USA', swatch: '#b22234' },
+  { id: 'usmod', label: 'USA (Modified)', swatch: '#3b5fa8' },
 ];
 
 const VALID_THEME_IDS = THEME_LIST.map((t) => t.id);
