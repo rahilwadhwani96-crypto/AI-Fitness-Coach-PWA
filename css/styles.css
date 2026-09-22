@@ -1579,6 +1579,57 @@ textarea:focus {
   border: 1px solid var(--danger);
 }
 
+.coach-message--proposal {
+  align-self: stretch;
+  max-width: 100%;
+  background: var(--bg);
+  border: 1px solid var(--accent);
+  border-radius: 14px;
+  padding: 12px 14px;
+}
+
+.coach-proposal-title {
+  margin: 0 0 4px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.coach-proposal-exercise {
+  margin: 0 0 4px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.coach-proposal-detail {
+  margin: 0 0 2px;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.coach-proposal-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.coach-proposal-actions button {
+  margin: 0;
+  padding: 8px 0;
+  font-size: 13px;
+}
+
+.coach-proposal-cancel {
+  background: var(--surface);
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+}
+
+.coach-proposal-confirm {
+  background: var(--accent);
+  color: var(--accent-contrast);
+}
 .coach-message-image {
   width: 100%;
   max-width: 200px;
