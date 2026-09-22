@@ -1,6 +1,7 @@
 import { ICONS } from './icons.js';
 import { callApi, ApiError } from '../api/client.js';
 import { resizeImageToBase64 } from '../utils/imageResize.js';
+import { escapeHtml } from '../utils/escapeHtml.js';
 
 /**
  * Attaches the floating AI Coach button (and its chat panel) to `root`.
@@ -14,9 +15,10 @@ import { resizeImageToBase64 } from '../utils/imageResize.js';
  *
  * `sessionContext.currentExercise`, if provided, tells the backend a
  * specific exercise is being viewed — the only case skip/swap actions
- * are allowed. `onAction(action, replacementExercise)` fires for any
- * action the Coach takes (skip/swap exercise, or an equipment update,
- * which is available from any screen).
+ * are allowed. Any action the Coach proposes (skip/swap/add exercise,
+ * or an equipment update) is shown as a card with the actual details
+ * and only applied — via `onAction(action, payload)` — once the user
+ * taps Confirm. Nothing happens silently.
  */
 export function attachCoachFab(root, { compact = false, screen = 'general', sessionContext = null, onAction = null } = {}) {
   if (root.querySelector('.coach-fab')) return;
@@ -118,15 +120,10 @@ function toggleCoachPanel(root, screen, sessionContext, onAction) {
       pendingEl.textContent = result.reply;
       history.push({ role: 'coach', text: result.reply });
 
-      if (result.action && result.action !== 'none' && typeof onAction === 'function') {
-        const exercisePayload =
-          result.action === 'swap_exercise'
-            ? result.replacementExercise
-            : result.action === 'add_exercise'
-              ? result.newExercise
-              : null;
-        onAction(result.action, exercisePayload);
-        return; // the screen may re-render as a result, which removes this panel
+      // The reply already acknowledges what was asked — any action just
+      // gets proposed as a card here, never applied automatically.
+      if (result.action && result.action !== 'none') {
+        renderActionProposal(messagesEl, result.action, result, onAction);
       }
     } catch (err) {
       const message = err instanceof ApiError ? err.message : 'Sorry, I had trouble responding.';
@@ -206,4 +203,84 @@ function renderErrorWithRetry(el, message, onRetry) {
   el.appendChild(textSpan);
   el.appendChild(document.createElement('br'));
   el.appendChild(retryButton);
+}
+
+/**
+ * Renders the actual proposed change (exercise details or equipment
+ * additions/removals) as a card with Confirm/Cancel — nothing from an
+ * action is ever applied until the user taps Confirm here.
+ */
+function renderActionProposal(messagesEl, action, result, onAction) {
+  let bodyHtml = '';
+
+  if (action === 'skip_exercise') {
+    bodyHtml = `<p class="coach-proposal-title">Skip this exercise?</p>`;
+  } else if (action === 'swap_exercise' && result.replacementExercise) {
+    bodyHtml = exerciseProposalHtml('Replace with:', result.replacementExercise);
+  } else if (action === 'add_exercise' && result.newExercise) {
+    bodyHtml = exerciseProposalHtml('Add to your session:', result.newExercise);
+  } else if (action === 'update_equipment' && result.equipmentChanges) {
+    const add = result.equipmentChanges.add || [];
+    const remove = result.equipmentChanges.remove || [];
+    bodyHtml = `<p class="coach-proposal-title">Update your equipment?</p>`;
+    if (add.length) {
+      bodyHtml += `<p class="coach-proposal-detail">Add: ${add.map(escapeHtml).join(', ')}</p>`;
+    }
+    if (remove.length) {
+      bodyHtml += `<p class="coach-proposal-detail">Remove: ${remove.map(escapeHtml).join(', ')}</p>`;
+    }
+  } else {
+    return; // nothing concrete to propose
+  }
+
+  const card = document.createElement('div');
+  card.className = 'coach-message coach-message--proposal';
+  card.innerHTML =
+    bodyHtml +
+    `
+    <div class="coach-proposal-actions">
+      <button type="button" class="coach-proposal-cancel">Cancel</button>
+      <button type="button" class="coach-proposal-confirm">Confirm</button>
+    </div>
+  `;
+
+  messagesEl.appendChild(card);
+  messagesEl.scrollTop = messagesEl.scrollHeight;
+
+  card.querySelector('.coach-proposal-cancel').addEventListener('click', () => {
+    card.remove();
+    addMessage(messagesEl, 'coach', 'No changes made.');
+  });
+
+  card.querySelector('.coach-proposal-confirm').addEventListener('click', async () => {
+    card.querySelectorAll('button').forEach((b) => (b.disabled = true));
+
+    if (action === 'update_equipment') {
+      try {
+        await callApi('applyEquipmentChanges', result.equipmentChanges);
+        card.remove();
+        if (typeof onAction === 'function') onAction('update_equipment', null);
+      } catch (err) {
+        addMessage(messagesEl, 'coach', 'Could not update your equipment. Try again.');
+        card.querySelectorAll('button').forEach((b) => (b.disabled = false));
+      }
+      return;
+    }
+
+    // Exercise actions apply locally in the session (no separate API call —
+    // they're only persisted when the whole workout is saved at the end).
+    const exercisePayload = action === 'swap_exercise' ? result.replacementExercise : action === 'add_exercise' ? result.newExercise : null;
+    if (typeof onAction === 'function') {
+      onAction(action, exercisePayload); // the screen re-renders as a result, removing this panel
+    }
+  });
+}
+
+function exerciseProposalHtml(title, exercise) {
+  return `
+    <p class="coach-proposal-title">${escapeHtml(title)}</p>
+    <p class="coach-proposal-exercise">${escapeHtml(exercise.name)}</p>
+    <p class="coach-proposal-detail">${escapeHtml(exercise.sets)} sets × ${escapeHtml(exercise.reps)} — ${escapeHtml(exercise.targetMuscle)}</p>
+    <p class="coach-proposal-detail">Equipment: ${escapeHtml(exercise.equipmentUsed)}</p>
+  `;
 }
