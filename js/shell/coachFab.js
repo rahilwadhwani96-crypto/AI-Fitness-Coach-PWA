@@ -73,6 +73,11 @@ function toggleCoachPanel(root, screen, sessionContext, onAction) {
   const pendingImagePreview = panel.querySelector('#coach-pending-image-preview');
   const removeImageButton = panel.querySelector('#coach-remove-image');
   const history = [];
+  // Every exercise name proposed (swap or add) in this open chat, whether
+  // confirmed or cancelled — sent back on every later message so the
+  // Coach can't re-suggest something it already offered and was told no
+  // to, instead of relying on it correctly inferring that from prose.
+  const proposedExerciseNames = [];
   let pendingImage = null; // { base64, mimeType, previewUrl }
 
   addMessage(messagesEl, 'coach', "Hey! I'm your AI coach — ask me about your workout, nutrition, or progress.");
@@ -111,6 +116,12 @@ function toggleCoachPanel(root, screen, sessionContext, onAction) {
       if (sessionContext && sessionContext.currentExercise) {
         requestPayload.currentExercise = sessionContext.currentExercise;
       }
+      if (sessionContext && Array.isArray(sessionContext.allExerciseNames)) {
+        requestPayload.sessionExerciseNames = sessionContext.allExerciseNames;
+      }
+      if (proposedExerciseNames.length > 0) {
+        requestPayload.excludeExercises = proposedExerciseNames.slice();
+      }
       if (image) {
         requestPayload.imageBase64 = image.base64;
         requestPayload.mimeType = image.mimeType;
@@ -123,7 +134,7 @@ function toggleCoachPanel(root, screen, sessionContext, onAction) {
       // The reply already acknowledges what was asked — any action just
       // gets proposed as a card here, never applied automatically.
       if (result.action && result.action !== 'none') {
-        renderActionProposal(messagesEl, result.action, result, onAction);
+        renderActionProposal(messagesEl, result.action, result, onAction, proposedExerciseNames);
       }
     } catch (err) {
       const message = err instanceof ApiError ? err.message : 'Sorry, I had trouble responding.';
@@ -210,15 +221,17 @@ function renderErrorWithRetry(el, message, onRetry) {
  * additions/removals) as a card with Confirm/Cancel — nothing from an
  * action is ever applied until the user taps Confirm here.
  */
-function renderActionProposal(messagesEl, action, result, onAction) {
+function renderActionProposal(messagesEl, action, result, onAction, proposedExerciseNames) {
   let bodyHtml = '';
 
   if (action === 'skip_exercise') {
     bodyHtml = `<p class="coach-proposal-title">Skip this exercise?</p>`;
   } else if (action === 'swap_exercise' && result.replacementExercise) {
     bodyHtml = exerciseProposalHtml('Replace with:', result.replacementExercise);
+    if (proposedExerciseNames) proposedExerciseNames.push(result.replacementExercise.name);
   } else if (action === 'add_exercise' && result.newExercise) {
     bodyHtml = exerciseProposalHtml('Add to your session:', result.newExercise);
+    if (proposedExerciseNames) proposedExerciseNames.push(result.newExercise.name);
   } else if (action === 'update_equipment' && result.equipmentChanges) {
     const add = result.equipmentChanges.add || [];
     const remove = result.equipmentChanges.remove || [];
