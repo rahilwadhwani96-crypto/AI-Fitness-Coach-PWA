@@ -54,10 +54,10 @@ export function startWorkoutSession(appRoot, { workout, profile, onEnd }) {
       </div>
     `;
 
-    attachCoachFab(appRoot, {
+        attachCoachFab(appRoot, {
       compact: true,
       screen: `workout session — viewing exercise: ${exercise.name}`,
-      sessionContext: { currentExercise: exercise },
+      sessionContext: { currentExercise: exercise, allExerciseNames: exercises.map((e) => e.name) },
       onAction: (action, exercisePayload) => {
         if (action === 'skip_exercise') {
           difficulties.push('Skipped');
